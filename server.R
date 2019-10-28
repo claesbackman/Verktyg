@@ -1,40 +1,73 @@
 library(shiny)
 library(ggplot2)
 library(tidyverse)
+
+# definera saker 
+
+
 shinyServer(function(input, output) {
         
         ################################ 
         # Random 
         ################################ 
+  
+    # Att göra 
+        # uppdatera procent i amorteringar enligt kontantinsats och amorteringskravet
         
- 
-        # uppdatera procent i amorteringar enligt kontantinsats
-        
-        
-        ################################ 
-        # Formler 
         ################################
-        
-        formel_ränta <- reactive({
-                tid <- input$boxTid
-                pris <- input$boxPris
-                ki <- input$boxKI
-                amortering <- input$BoxAmort
-                ränta <- input$boxR
-                pris*(1-ki)
-        })
-
-        # initiala kostander köpa 
+        # initiala kostnader köpa 
         formel_intiala_köpa <-  reactive({
                 pris <- input$boxPris
                 ki <- input$boxKI        
                 round(pris*ki)
                 })
         
+        ################################
         # Återkommande kostnader
+        ################################
         
+        # Räntekostnader 
+        räntaTable <- reactive({
+          tid <- input$boxTid
+          tid2 <- tid-1
+          pris <- input$boxPris
+          ki <- input$boxKI
+          amortering <- input$BoxAmort
+          ränta <- input$boxR*0.7 # ränte gånger 1-skatteavdrag 
+          skuld <- pris*(1-ki)
+          df  <- skuld*ränta
+          for (i in 1:tid2) {
+            bal <- skuld*(1-amortering*i)*ränta
+            df <- rbind(df,bal)
+          }
+          print(df[,1])
+        })
         
+        # Totala räntekostnader 
+        räntaSum <- reactive({sum(räntaTable())
+        })
+        
+        # renoveringar - räknas med en geometrisk formel. Procent av tidigare års bostadspris
+        renoveringar <- reactive({
+          renovering <-  input$boxReno * input$boxPris
+          tid <- input$boxTid
+          ökning <- 1+input$boxDeltaP
+          renovering * (1-ökning^tid)/(1-ökning)
+        })
+        
+        # totala återkommande kostnader 
+        formel_totala_återkommande <- reactive({
+          avgifter <- input$boxAvgift
+          försäkring <- input$boxFörsäkring
+          tid <- input$boxTid
+          andra <- input$boxAndraKöpa
+          # skatter 
+          round(renoveringar() + räntaSum() + (försäkring+andra)*tid,digit=0)
+        })
+        
+        ################################
         # Alternativkostnader
+        ################################
         
         # kontantinsats + amorteringar investerat istället
           # Nu räknas det som att betalningar sparas i slutet av året.
@@ -47,24 +80,16 @@ shinyServer(function(input, output) {
           round(ki*(1+r_stocks)^tid-ki+(betalningar*(((1 + r_stocks)^(tid) - 1) / (r_stocks)))-betalningar*tid, digit=0)
           })
         
+        ################################
         # Vinster för investeringar
+        ################################
+        
         formel_husprisvinst <-  reactive({
                 pris <- input$boxPris
                 husprisökning <- input$boxDeltaP     
                 round(pris*(1+husprisökning)^input$boxTid-pris, digits=0)
         })
-       
-        
-        # Fasta kostnader
-                # Renoveringar
-                renoveringar <- reactive({
-                      reno <- input$boxReno
-                      pris <- input$boxPris
-                      round(reno*pris, digits=0)
-                })
-                
-        
-                
+    
         # totala amorteringar - amorteringsprocent gånger antal år 
         totamortering <- reactive({
                 pris <- input$boxPris
@@ -75,66 +100,66 @@ shinyServer(function(input, output) {
                 
         })
         
-                
-        # compound interest formel 
-        formula <- reactive({
-                pris <- input$boxPris
-                tid <- input$boxTid
-                ränta <- input$boxR
-                ki <- input$boxKI
-                round(pris*(1+ränta)^tid, digits=2)
+        ################################
+        # Sammanställning kostnader för att köpa
+        ################################
+        
+        formel_totala_kostnader <- reactive ({
+          formel_intiala_köpa() + formel_totala_återkommande() + formel_alternativkostnad() - formel_husprisvinst()
         })
         
-        ################################
-        # Tabeller 
-        ################################
-        
-        # # Räntekostnader 
-        räntaTable <- reactive({
-                tid <- input$boxTid
-                tid2 <- tid-1
-                pris <- input$boxPris
-                ki <- input$boxKI
-                amortering <- input$BoxAmort
-                ränta <- input$boxR*0.7 # ränte gånger 1-skatteavdrag 
-                skuld <- pris*(1-ki)
-                df  <- skuld*ränta
-                for (i in 1:tid) {
-                        bal <- skuld*(1-amortering*i )*ränta
-                        df <- rbind(df,bal)
-                }
-                print(df[,1])
-                })
-                
-        räntaSum <- reactive({
-                rowSum(räntaTable())
-        })        
-
-        # Tabell med vörden 
-        # balTable <- reactive({
-        #         bal <- input$boxPris
-        #         df <- 0
-        #         for (i in 1:50) {
-        #                 bal <- bal*(1+input$boxR)
-        #                 df <- rbind(df, bal-input$boxPris)
-        #         }
-        #         print(df[,1])
-        # })
-
         ################################ 
         # Grafer
         ################################
-                
-        # Huvudgrafen- vad kostar det per år? 
         
-        
-                
-        # Compound interest plot
-           output$plot1 <- renderPlot({
-                   tid <- input$boxTid
-                plot(0:tid, räntaTable(), xlab="År", ylab="Räntekostnad")
-                # points(tid, formula()-input$boxPris, col = "red", pch = 16, cex = 1.75)
+        # Räntekostnader 
+        kostnadTable <- reactive({
+          tid <- input$boxTid
+          tid2 <- tid-1
+          pris <- input$boxPris
+          deltaP <- (1+input$boxDeltaP)
+          ki <- input$boxKI
+          amortering <- input$BoxAmort
+          ränta <- input$boxR*0.7 # ränte gånger 1-skatteavdrag 
+          skuld <- pris*(1-ki)
+          reno <- input$boxReno
+          andrasammanlagda <- input$boxAvgift +input$boxFörsäkring + input$boxAndraKöpa 
+          df2  <- (skuld*ränta + reno*pris + andrasammanlagda)/12
+          # Räntekostnader + renoveringar + sammanställda * inflationstakt
+            for (i in 1:tid2) {
+              bal2 <- (skuld*(1-amortering*i)*ränta + reno*pris*deltaP^i + andrasammanlagda)/12
+              df2 <- rbind(df2,bal2)
+            }
+          print(df2[,1])
         })
+
+        # Totala utgifter
+        utgiftTable <- reactive({
+          tid <- input$boxTid
+          tid2 <- tid-1
+          pris <- input$boxPris
+          deltaP <- (1+input$boxDeltaP)
+          ki <- input$boxKI
+          amortering <- input$BoxAmort
+          ränta <- input$boxR*0.7 # ränte gånger 1-skatteavdrag 
+          skuld <- pris*(1-ki)
+          reno <- input$boxReno
+          andrasammanlagda <- input$boxAvgift +input$boxFörsäkring + input$boxAndraKöpa 
+          df3  <- (skuld*ränta + reno*pris + andrasammanlagda + amortering*pris*(1-ki))/12
+            for (i in 1:tid2) {
+              bal3 <- (skuld*(1-amortering*i)*ränta + reno*pris*deltaP^i + andrasammanlagda + amortering*pris*(1-ki))/12
+              df3 <- rbind(df3,bal3)
+            }
+          print(df3[,1])
+        })
+
+        
+          # Graf med kostnader per månad och utgifter per månad
+           output$plot1 <- renderPlot({
+                   tid <- input$boxTid -1
+                plot(0:tid, utgiftTable(), xlab="År",ylab="Kostnader",col="red")
+                  lines(0:tid, utgiftTable(),col="green")
+            })
 
         ################################ 
         # Uppdelade kostnader 
@@ -156,7 +181,7 @@ shinyServer(function(input, output) {
         
         # Återkommande kostnader
         output$återkommande <- renderText({
-                paste("Återkommande kostnader: ", formel_intiala_köpa(), "kr")
+                paste("Återkommande kostnader: ", formel_totala_återkommande(), "kr")
         })
         
         # Vinster
@@ -169,13 +194,18 @@ shinyServer(function(input, output) {
                 paste("Intiala kostnader: ", formel_intiala_köpa(), "kr")
         })
         
+        output$totala_kostnader_köpa <- renderText({
+          paste("Totala kostnader:", formel_totala_kostnader(), "kr")
+        })
+        
+        
         ################################ 
         # texter 
         ################################ 
         
-        # Räntekostnader 
+        # Räntekostnader
         output$räntekostnader <- renderText({
-                paste("Räntekostnader",formel_ränta(),"kr" )
+                paste("Räntekostnader",räntaSum(),"kr" )
         })
           
         # amorteringar
@@ -190,19 +220,19 @@ shinyServer(function(input, output) {
         
         # Bostadspris
         output$Text_pris <- renderText({
-                "Bostadspris. En väldigt viktig del är hur din nya bostad kostar. 
+                "<b> Bostadspris. </b> En väldigt viktig del är hur din nya bostad kostar. 
                 Det är inte den enda delen, utan vi behöver titta på fler saker innan vi kan ta ett beslut."
         })
         
         # Tid i bostaden 
         output$text_tid <- renderText({
-                "Tid i bostaden. Ju längre du planerar att stanna, desto bättre är det att köpa. 
+                "<b> Tid i bostaden </b>. Ju längre du planerar att stanna, desto bättre är det att köpa. 
                               Det är för att fasta kostnader sprids över fler år. "
         })
       
         #inkomst
         output$text_inkomst <- renderText({
-                "Om ditt bolån är större än 4.5 gånger din bruttoinkomst
+                "<b> Inkomst </b>. Om ditt bolån är större än 4.5 gånger din bruttoinkomst
                 ska du amortera en procent mer per år. 
                 Din bruttoinkomst beräknas genom att XXX..."
         })
