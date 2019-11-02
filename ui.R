@@ -43,7 +43,7 @@ shinyUI(
                                                 , value = 1000000, min=0, max=10000000, step=10000, ticks=FALSE, width="95%", post  = " kr")
                                     ),
                              column(10,
-                                    plotOutput("plotPris", height="300px", width= "100%")
+                                    plotOutput("grafPris", height="300px", width= "100%")
                              )
                     ),
                     
@@ -112,7 +112,10 @@ shinyUI(
                     textOutput("vinster"),
                     textOutput("totala_kostnader_köpa"), 
                     br(),
-                    textOutput("totala_kostnader_hyra")
+                    textOutput("totala_kostnader_hyra"),
+                     textOutput("månadskostnader_hyra"),
+                     br()
+                   # textOutput("grafpris")
                    ))
         ) # fluidrow 
   ) # fluidpage 
