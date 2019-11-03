@@ -18,6 +18,7 @@ shinyServer(function(input, output) {
         # Just nu: renoveringar uppdateras inte när priset går upp. Så du renoverar en procent av det ursprungliga beloppet
           # Annars så ökar renoveringarna när huspriserna ökar, vilket känns konstigt 
   
+        # om kontantinsatsen är 1000 procent så funkar inte grafen
   
   ################################ 
   # Function för att beräkna kostnader 
@@ -75,17 +76,29 @@ shinyServer(function(input, output) {
   ###############################
   
    tablePris <- reactive({
-   seq <-  seq(from=10000, to=10000000, by=10000)
+     min <- input$boxPris - 1000000
+     # min <- 0
+     max <- input$boxPris + 1000000
+     if( input$boxPris<=1000000) {
+       max <- 2000000
+       min <-0
+       }
+     if( input$boxPris > 9000000) {
+       max <- 10000000
+       min <-8000000
+     }
+    
+   seq <-  seq(from=min, to=max-50000, by=50000)
   
    # Första värdet 
     row <- hyraFunction(
-     pris=10000, 
+     pris=min, 
      tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
      amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
      rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
      forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=  input$boxAndraHyra
    )     
-   
+    
    # alla värden 
     for (i in seq) {
      bal <- hyraFunction(
@@ -97,50 +110,74 @@ shinyServer(function(input, output) {
       )     
      row <- rbind(row,bal)
     }
-   print(row[,1])
+    print(row[,1])
   })
    
    # värdet för punkten
    
     output$grafPris <- renderPlot({
+      
+      min <- input$boxPris - 1000000
+      # min <- 0
+      max <- input$boxPris + 1000000
+      # if( input$boxPris<=1000000) {
+      #   max <- 2000000
+      #   min <-0
+      # }
+      # if( input$boxPris > 9000000) {
+      #   max <- 10000000
+      #   min <-8000000
+      # }
+      
+      
+    seq <-  seq(from=min, to=max, by=50000)
 
     # All data 
-    xValue <- 1:1001
+    xValue <- seq
     yValue <- tablePris()
     data <- data.frame(xValue,yValue)
     
+    # Det valda värdet 
     punktPris  <- hyraFunction(
-      pris=input$boxPris, 
+      pris=input$boxPris,
       tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
       amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
       rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
-      forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=  input$boxAndraHyra
+      forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
     )     
     
-     xValue2 <- input$boxPris/10000
-     data2 <- data.frame(xValue2,punktPris)
-
-  #   # Define the plot
-  p <-   ggplot() +
-    geom_bar(data=data, aes(x=xValue, y = yValue), stat="identity", alpha=0.2, width=0.7, color="gray83") +
-    theme_bw(base_size = 12) +
-    theme(
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      
-      panel.border = element_blank(),
-      axis.ticks = element_blank(),
-      axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
-      axis.title.x = element_text(face = "bold") 
-    ) +
-    scale_y_continuous("Motsvarande hyra", position = "right") +
-    scale_x_continuous("Bostadspris",breaks= pretty_breaks(), labels=function(x)x*1000) + 
-    # Andra delen   
-    geom_bar(data=data2, aes(x=xValue2,y=punktPris), stat="identity", color="red") + 
-    geom_label(data=data2,  aes(x=xValue2,y=punktPris), label= paste(punktPris, "kr", sep=" ") , position = position_stack(vjust = 1.2))
-
-    # geom_text(data=data2, aes(x=xValue2,y=punktPris), label= punktPris, size = 10,  stat="identity")
+    data <- data %>% mutate(ToHighlight = ifelse(xValue == input$boxPris, "yes", "no"))
+    
+    print(data)
   
+     # 
+     # xValue2 <- input$boxPris/10000
+     # data2 <- data.frame(xValue2,punktPris)
+
+  #   # Define the plot fill = highlight_flag
+     p <-   ggplot(data=data, aes(x=xValue, y = yValue, fill = ToHighlight)) +
+            geom_bar(stat="identity") +
+            theme_bw(base_size = 12) +
+            theme(
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
+              axis.title.x = element_text(face = "bold") 
+            ) +
+            scale_y_continuous("Motsvarande hyra", position = "right") +
+            scale_x_continuous("Bostadspris", breaks= pretty_breaks(n=10)) + 
+            scale_fill_manual(values = c( "yes"="red", "no"="gray83" ), guide = FALSE) +
+     
+            # Andra delen   
+            # geom_bar(data=data2, aes(x=xValue2,y=punktPris), stat="identity", color="red") +
+            geom_label(data=data %>% filter(ToHighlight=="yes"), aes(x=xValue,y=yValue),
+                        label=paste(punktPris, "kr", sep=" ") , 
+                        position = position_stack(vjust = 1.2), 
+                        color = "black", 
+                        fill="white")
+    
     # Print the plot
   print(p)
     })
