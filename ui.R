@@ -1,6 +1,8 @@
 library(shiny)
 library(shinythemes)
 library(markdown)
+library(shinydashboard)
+
 
 shinyUI(
     fluidPage(
@@ -18,10 +20,10 @@ shinyUI(
       fluidRow(
         column(8,
                  p(img(src="LU_Ekonomihögskolan_RGB_SV.png",height="30%",width="30%"),
-                    HTML("<hr color='blue' >") 
+                    HTML("<hr color='grey' >") 
                   )
         ),
-        column(3, p("Klicka här för att komma till kursen och läsa mer. "))
+        column(3, p("Klicka här för läsa mer om kursen. "))
       ),
       titlePanel("Ska du köpa eller hyra?"),
 #       headerPanel("Ska du köpa eller hyra?"),
@@ -34,29 +36,49 @@ shinyUI(
                       För att hjälpa dig med det beslutet så tar verktyget nedan in de viktigaste kostnaderna 
                       för att köpa och beräknar en motsvarande hyra. 
                       Om du kan hitta en bostad för en lägre hyra än det så är det bättre att hyra." 
-                    , HTML("<hr color='blue' >")),
+                    , HTML("<hr color='grey' >")),
+                    
+                    # Pris
                     htmlOutput("Text_pris"),
                     br(),            
-                    
                     fluidRow(column(2,
                                     sliderInput("boxPris", "Bostadspris"
                                                 , value = 1000000, min=0, max=10000000, step=10000, ticks=FALSE, width="95%", post  = " kr")
                                     ),
                              column(10,
-                                    plotOutput("grafPris", height="300px", width= "100%")
+                                    plotOutput("grafPris", height="200px", width= "100%")
                              )
                     ),
                     
+                    # tid 
                     br(),            
-                    HTML("<hr color='blue' >"),
+                    HTML("<hr color='grey' >"),
                     htmlOutput("text_tid"),
                     br(),            
-                    
-                    sliderInput("boxTid", "Tid i bostaden"
-                                , value = 10, min=1, max=50, step=1, ticks=FALSE, width="95%", post  = " år"),
+                    fluidRow(column(2,
+                                    
+                                    sliderInput("boxTid", "Tid i bostaden"
+                                                , value = 10, min=1, max=50, step=1, ticks=FALSE, width="95%", post  = " år")
+                    ),
+                    column(10,
+                           plotOutput("grafTid", height="200px", width= "100%")
+                    )
+                    ),
+                    # Ränta 
+                    br(),            
+                    HTML("<hr color='grey' >"),
                     htmlOutput("text_bolån"),
+                    br(),            
+                    fluidRow(column(2,
+                                    
+                                    sliderInput("boxR", "Bolåneränta.", value = 3, min=0, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %")
+                    ),
+                    column(10,
+                           plotOutput("grafRanta", height="200px", width= "100%")
+                    )
+                    ),
+                    # htmlOutput("text_bolån"),
                     
-                    sliderInput("boxR", "Bolåneränta.", value = 3, min=0, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %"),
                     # sliderInput("boxRtopp", "Ränta på eventuellt topplån.", value = 5, min=0, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %"),
                     sliderInput("boxKI", "Kontantinsats. ", value = 15, min=15, max=100, step=1, ticks=FALSE, width="95%", post  = " %"),
                     htmlOutput("text_belåningsgrad"),
@@ -91,7 +113,6 @@ shinyUI(
                     sliderInput("boxAndraKöpa", "Andra kostnader", value = 1000, min=0,  max= 100000, step=100, ticks=FALSE, width="95%", post  = " kr"),
                     sliderInput("boxAndraHyra", "Andra kostnader för att hyra", value = 10000, min=0,  max= 100000, step=100, ticks=FALSE, width="95%", post  = " kr")
                     
-                    # 
                     # checkboxInput("smooth", "Smooth"),
                     # conditionalPanel(
                     #   condition = "input.smooth == true",
@@ -100,14 +121,12 @@ shinyUI(
                     # )
                     #sliderInput("boxHyra", "Hyra", value = 1000, min=0,  max= 100000, step=100, ticks=FALSE, width="95%")
                     ), #  column
-             
-             # column(5,
-             #        plotOutput("plot1", width= "75%")
-             #        ),
-             column(1,  fixedPanel(top = "100", width = "45%",
+             column(4,  fixedPanel(top = "120", width = "45%",
+                    htmlOutput("hyrabättre"),
                     htmlOutput("sumkostnader"),
-                    textOutput("intiala_köpa"),
+                    textOutput("initiala_köpa"),
                     textOutput("återkommande"),
+                    textOutput("räntekostnader"),
                     textOutput("alternativkostnader"),
                     textOutput("vinster"),
                     textOutput("totala_kostnader_köpa"), 
@@ -115,7 +134,6 @@ shinyUI(
                     textOutput("totala_kostnader_hyra"),
                      textOutput("månadskostnader_hyra"),
                      br()
-                   # textOutput("grafpris")
                    ))
         ) # fluidrow 
   ) # fluidpage 
