@@ -2,6 +2,8 @@ library(shiny)
 library(ggplot2)
 library(tidyverse)
 library(scales)
+library(tableHTML)
+library(shinydashboard)
 
 formatnummer <- format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)
 
@@ -41,7 +43,7 @@ shinyServer(function(input, output) {
     betalningar <- amortering / 100 * skuld
     husprisökning <- deltaPris  / 100
     renoveringar_2 <- renovering/100 * pris * tid
-    hyresökning <- deltaHyra / 100 
+    hyresökning <- deltaHyra / 100
     amortering_2 <- amortering / 100
     skuldsättning_slut <- (1-ki) - tid*amortering_2
     
@@ -69,8 +71,14 @@ shinyServer(function(input, output) {
     totala_kostnader <- intiala_köpa +totala_återkommande + alternativkostnad - husprisvinst #Funkar! 
 
     # Beräkning av hyra
-    round(totala_kostnader/ ((1-(1+hyresökning)^tid)/(1-(1+hyresökning)))/12
+    if(hyresökning == 0) {
+      round(totala_kostnader/tid/12, digit=0)
+    }
+    else {
+    round(totala_kostnader/((1-(1+hyresökning)^tid)/(1-(1+hyresökning)))/12
           , digit=0)
+    }
+    
     }
 
   ###############################
@@ -131,8 +139,7 @@ shinyServer(function(input, output) {
     print(data)
     
     # max value for y-axis
-    ymax <- punktPris*2
-    
+
     # se till att axeln aldrig går under 0 
     if (min < 0) {
       xaxel <- c(0,max+1)
@@ -152,7 +159,7 @@ shinyServer(function(input, output) {
               axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
               axis.title.x = element_text(face = "bold") 
             ) +
-            scale_y_continuous("Motsvarande hyra", position = "right", limits=c(0,ymax)) +
+            scale_y_continuous("Motsvarande hyra", position = "right") +
             scale_x_continuous("Bostadspris",limits=xaxel, labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) + 
             scale_fill_manual(values = c( "yes"="red", "no"="gray83"), guide = FALSE) +
             geom_label(data=data %>% filter(ToHighlight=="yes"), aes(x=xValue,y=yValue),
@@ -335,15 +342,551 @@ shinyServer(function(input, output) {
       # Print the plot
       print(p)
     })
-    
-    
-    
-    
   
-  
-        ################################
+    
+    
+    
+    ###############################
+    # Amortering - graf 
+    ###############################
+   
+    
+    tableAmort <- reactive({
+      
+      # Sequence 
+      min <- input$BoxAmort - 5 
+      max <- input$BoxAmort + 5
+      seq <-  seq(from=0, to=max-0.1, by=0.1)
+      
+      # Första värdet 
+      rowAmort <- hyraFunction(
+        pris=input$boxPris, 
+        tid=input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= 2, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      
+      # alla värden 
+      for (i in seq) {
+        balAmort <- hyraFunction(
+          pris=input$boxPris,
+          tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+          amortering= i, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
+          rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+          forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+        )     
+        rowAmort <- rbind(rowAmort,balAmort)
+      }
+      print(rowAmort[,1])
+    })
+    
+    # värdet för punkten
+    output$grafAmort <- renderPlot({
+      min <- input$BoxAmort - 5 
+      max <- input$BoxAmort + 5
+      seq <-  seq(from=0, to=max, by=0.1)
+      # seq <-  seq(from=0, to=15, by=0.1)
+      # All data 
+      xAmort <- seq
+      yAmort <- tableAmort()
+      dataAmort <- data.frame(xAmort,yAmort)
+      
+      # Det valda värdet 
+      punkt <- hyraFunction(
+        pris=input$boxPris,
+        tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      dataAmort <- dataAmort %>% mutate(ToHighlight = ifelse(xAmort == input$BoxAmort, "yes", "no"))
+      
+      print(dataAmort)
+      
+      # X axeln stannar på 0 
+      if (min < 0) {
+        xaxel <- c(0,max+1)
+      }
+      else {
+        xaxel <- c(min,max)
+      }
+      # limits=xaxel
+      
+      # Graf
+      p <-   ggplot(data=dataAmort, aes(x=xAmort, y = yAmort, fill = ToHighlight)) +
+        geom_bar(stat="identity") +
+        theme_bw(base_size = 12) +
+        theme(
+          # panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          # axis.ticks = element_blank(),
+          axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
+          axis.title.x = element_text(face = "bold") 
+        ) +
+        scale_y_continuous("Motsvarande hyra", position = "right", labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) +
+        scale_x_continuous("Amortering per år",  labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) + 
+        scale_fill_manual(values = c( "yes"="red", "no"="gray83"), guide = FALSE) +
+        geom_label(data=dataAmort %>% filter(ToHighlight=="yes"), aes(x=xAmort,y=yAmort),
+                   label=paste(punkt, "kr", sep=" ") , 
+                   position = position_stack(vjust = 1.2), 
+                   color = "black", 
+                   fill="white")
+      
+      # Print the plot
+      print(p)
+    })
+    
+    
+    
+    ###############################
+    # Kontantinsats - graf 
+    ###############################
+    
+    
+    tableKI <- reactive({
+      input$boxKI
+      # Sequence 
+      min <- input$boxKI - 15
+      max <- input$boxKI + 20
+      seq <-  seq(from=min, to=max-1, by=1)
+      
+      # Första värdet 
+      rowKI <- hyraFunction(
+        pris=input$boxPris, 
+        tid=input$boxTid, ranta=input$boxR, kontantinsats= min, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      
+      # alla värden 
+      for (i in seq) {
+        balKI <- hyraFunction(
+          pris=input$boxPris,
+          tid= input$boxTid, ranta=input$boxR, kontantinsats= i, inkomst= input$boxInc,
+          amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
+          rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+          forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+        )     
+        rowKI <- rbind(rowKI,balKI)
+      }
+      print(rowKI[,1])
+    })
+    
+    # värdet för punkten
+    output$grafKI<- renderPlot({
+      min <- input$boxKI - 15
+      max <- input$boxKI + 20
+      seq <-  seq(from=min, to=max, by=1)
+      # seq <-  seq(from=0, to=15, by=0.1)
+      # All data 
+      xKI <- seq
+      yKI <- tableKI()
+      dataKI <- data.frame(xKI,yKI)
+      
+      # Det valda värdet 
+      punkt <- hyraFunction(
+        pris=input$boxPris,
+        tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP ,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      dataKI <- dataKI %>% mutate(ToHighlight = ifelse(xKI == input$boxKI, "yes", "no"))
+      
+      print(dataKI)
+      
+      # X axeln stannar på 0 
+      if (min < 0) {
+        xaxel <- c(0,max+1)
+      }
+      else {
+        xaxel <- c(min,max)
+      }
+      # limits=xaxel
+      
+      # Graf
+      p <-   ggplot(data=dataKI, aes(x=xKI, y = yKI, fill = ToHighlight)) +
+        geom_bar(stat="identity") +
+        theme_bw(base_size = 12) +
+        theme(
+          # panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          # axis.ticks = element_blank(),
+          axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
+          axis.title.x = element_text(face = "bold") 
+        ) +
+        scale_y_continuous("Motsvarande hyra", position = "right", labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) +
+        scale_x_continuous("Kontantinsats",  labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) + 
+        scale_fill_manual(values = c( "yes"="red", "no"="gray83"), guide = FALSE) +
+        geom_label(data=dataKI %>% filter(ToHighlight=="yes"), aes(x=xKI,y=yKI),
+                   label=paste(punkt, "kr", sep=" ") , 
+                   position = position_stack(vjust = 1.2), 
+                   color = "black", 
+                   fill="white")
+      
+      # Print the plot
+      print(p)
+    })
+    
+    
+    #########################
+    # Husprisökning
+    #########################
+    
+    tableDeltaP <- reactive({
+      # Sequence 
+      min <- 0
+      max <- 10
+      seq <-  seq(from=min+1, to=max, by=1)
+      
+      # Första värdet 
+      rowDeltaP <- hyraFunction(
+        pris=input$boxPris, 
+        tid=input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=min,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      
+      # alla värden 
+      for (i in seq) {
+        balDeltaP <- hyraFunction(
+          pris=input$boxPris,
+          tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+          amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=i,
+          rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+          forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+        )     
+        rowDeltaP <- rbind(rowDeltaP,balDeltaP)
+      }
+      print(rowDeltaP[,1])
+    })
+    
+    # värdet för punkten
+    output$grafDeltaP<- renderPlot({
+      min <- 0
+      max <- 10
+      seq <-  seq(from=min, to=max, by=1)
+      # seq <-  seq(from=0, to=15, by=0.1)
+      # All data 
+      xDeltaP <- seq
+      yDeltaP <- tableDeltaP()
+      dataDeltaP <- data.frame(xDeltaP,yDeltaP)
+      
+      # Det valda värdet 
+      punkt <- hyraFunction(
+        pris=input$boxPris,
+        tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      dataDeltaP <- dataDeltaP %>% mutate(ToHighlight = ifelse(xDeltaP == input$boxDeltaP, "yes", "no"))
+      
+      print(dataDeltaP)
+      
+      # X axeln stannar på 0 
+      if (min < 0) {
+        xaxel <- c(0,max+1)
+      }
+      else {
+        xaxel <- c(min,max)
+      }
+      # limits=xaxel
+      
+      # Graf
+      p <-   ggplot(data=dataDeltaP, aes(x=xDeltaP, y = yDeltaP, fill = ToHighlight)) +
+        geom_bar(stat="identity") +
+        theme_bw(base_size = 12) +
+        theme(
+          # panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          # axis.ticks = element_blank(),
+          axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
+          axis.title.x = element_text(face = "bold") 
+        ) +
+        scale_y_continuous("Motsvarande hyra", position = "right", labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) +
+        scale_x_continuous("Husprisökning per år",  labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) + 
+        scale_fill_manual(values = c( "yes"="red", "no"="gray83"), guide = FALSE) +
+        geom_label(data=dataDeltaP %>% filter(ToHighlight=="yes"), aes(x=xDeltaP,y=yDeltaP),
+                   label=paste(punkt, "kr", sep=" ") , 
+                   position = position_stack(vjust = 1.2), 
+                   color = "black", 
+                   fill="white")
+      
+      # Print the plot
+      print(p)
+    })
+    
+    
+    #########################
+    # Hyresökning
+    #########################
+    
+    tableDeltaHyra <- reactive({
+      # Sequence 
+      min <- 0
+      max <- 10
+      seq <-  seq(from=min+1, to=max, by=1)
+      
+      # Första värdet 
+      rowDeltaHyra <- hyraFunction(
+        pris=input$boxPris, 
+        tid=input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=min, deltaPris=input$boxDeltaP,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      
+      # alla värden 
+      for (i in seq) {
+        balDeltaHyra <- hyraFunction(
+          pris=input$boxPris,
+          tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+          amortering= input$BoxAmort, deltaHyra=i, deltaPris=input$boxDeltaP,
+          rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
+          forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+        )     
+        rowDeltaHyra <- rbind(rowDeltaHyra,balDeltaHyra)
+      }
+      print(rowDeltaHyra[,1])
+    })
+    
+    # värdet för punkten
+    output$grafDeltaHyra<- renderPlot({
+      min <- 0
+      max <- 10
+      seq <-  seq(from=min, to=max, by=1)
+      # seq <-  seq(from=0, to=15, by=0.1)
+      # All data 
+      xDeltaHyra <- 0:10
+      yDeltaHyra <- tableDeltaHyra()
+      dataDeltaHyra <- data.frame(xDeltaHyra,yDeltaHyra)
+      
+      # Det valda värdet 
+      punkt <- hyraFunction(
+        pris=input$boxPris,
+        tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      dataDeltaHyra <- dataDeltaHyra %>% mutate(ToHighlight = ifelse(xDeltaHyra == input$boxDeltaRent, "yes", "no"))
+      
+      print(dataDeltaHyra)
+      
+      # X axeln stannar på 0 
+      if (min < 0) {
+        xaxel <- c(0,max+1)
+      }
+      else {
+        xaxel <- c(min,max)
+      }
+
+      # Graf
+      p <-   ggplot(data=dataDeltaHyra, aes(x=xDeltaHyra, y = yDeltaHyra, fill = ToHighlight)) +
+        geom_bar(stat="identity") +
+        theme_bw(base_size = 12) +
+        theme(
+          # panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          # axis.ticks = element_blank(),
+          axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
+          axis.title.x = element_text(face = "bold") 
+        ) +
+        scale_y_continuous("Motsvarande hyra", position = "right", labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) +
+        scale_x_continuous("Hyresökning per år",  labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) + 
+        scale_fill_manual(values = c( "yes"="red", "no"="gray83"), guide = FALSE) +
+        geom_label(data=dataDeltaHyra %>% filter(ToHighlight=="yes"), aes(x=xDeltaHyra,y=yDeltaHyra),
+                   label=paste(punkt, "kr", sep=" ") , 
+                   position = position_stack(vjust = 1.2), 
+                   color = "black", 
+                   fill="white")
+      
+      # Print the plot
+      print(p)
+    })
+    
+    
+    #########################
+    # Avkastning investeringar 
+    #########################
+    
+    tableDeltaSM <- reactive({
+      # Sequence 
+      min <- 0
+      max <- 15
+      seq <-  seq(from=min+1, to=max, by=1)
+      
+      # Första värdet 
+      rowDeltaSM  <- hyraFunction(
+        pris=input$boxPris,
+        tid=input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+        rstocks=min, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      
+      # alla värden 
+      for (i in seq) {
+        balDeltaSM  <- hyraFunction(
+          pris=input$boxPris,
+          tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+          amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+          rstocks=i, avgift= input$boxAvgift, renovering=input$boxReno ,
+          forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+        )     
+        rowDeltaSM  <- rbind(rowDeltaSM ,balDeltaSM )
+      }
+      print(rowDeltaSM [,1])
+    })
+    
+    # värdet för punkten
+    output$grafDeltaSM <- renderPlot({
+      min <- 0
+      max <- 15
+      seq <-  seq(from=min, to=max, by=1)
+      # seq <-  seq(from=0, to=15, by=0.1)
+      # All data 
+      xDeltaSM <- seq
+      yDeltaSM <- tableDeltaSM()
+      dataDeltaSM <- data.frame(xDeltaSM,yDeltaSM)
+      
+      # Det valda värdet 
+      punkt <- hyraFunction(
+        pris=input$boxPris,
+        tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      dataDeltaSM <- dataDeltaSM %>% mutate(ToHighlight = ifelse(xDeltaSM == input$boxDeltaSM, "yes", "no"))
+      
+      print(dataDeltaSM)
+      
+      
+      # Graf
+      p <-   ggplot(data=dataDeltaSM, aes(x=xDeltaSM, y = yDeltaSM, fill = ToHighlight)) +
+        geom_bar(stat="identity") +
+        theme_bw(base_size = 12) +
+        theme(
+          # panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          # axis.ticks = element_blank(),
+          axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
+          axis.title.x = element_text(face = "bold") 
+        ) +
+        scale_y_continuous("Motsvarande hyra", position = "right", labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) +
+        scale_x_continuous("Avkastning på investeringar",  labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) + 
+        scale_fill_manual(values = c( "yes"="red", "no"="gray83"), guide = FALSE) +
+        geom_label(data=dataDeltaSM %>% filter(ToHighlight=="yes"), aes(x=xDeltaSM,y=yDeltaSM),
+                   label=paste(punkt, "kr", sep=" ") , 
+                   position = position_stack(vjust = 1.2), 
+                   color = "black", 
+                   fill="white")
+      
+      # Print the plot
+      print(p)
+    })
+    
+    ###########################
+    # Sammanlagda kostnader för avgifter, försäkring och andra kostnader 
+      # Renoveringar påverkar också skatten på vinsten, så den är inte med här
+    ###########################
+    
+    tableKostnader <- reactive({
+      # Sequence 
+      min <- 0
+      max <- 15
+      seq <-  seq(from=min+1, to=max, by=1)
+      
+      # Första värdet 
+      sammanlagt <- input$boxAvgift + input$boxFörsäkring + input$boxAndraKöpa
+      
+      rowDeltaSM  <- hyraFunction(
+        pris=input$boxPris,
+        tid=input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+        rstocks=min, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      
+      # alla värden 
+      for (i in seq) {
+        balDeltaSM  <- hyraFunction(
+          pris=input$boxPris,
+          tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+          amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+          rstocks=i, avgift= input$boxAvgift, renovering=input$boxReno ,
+          forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+        )     
+        rowDeltaSM  <- rbind(rowDeltaSM ,balDeltaSM )
+      }
+      print(rowDeltaSM [,1])
+    })
+    
+    # värdet för punkten
+    output$grafDeltaSM <- renderPlot({
+      min <- 0
+      max <- 15
+      seq <-  seq(from=min, to=max, by=1)
+      # seq <-  seq(from=0, to=15, by=0.1)
+      # All data 
+      xDeltaSM <- seq
+      yDeltaSM <- tableDeltaSM()
+      dataDeltaSM <- data.frame(xDeltaSM,yDeltaSM)
+      
+      # Det valda värdet 
+      punkt <- hyraFunction(
+        pris=input$boxPris,
+        tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
+        amortering= input$BoxAmort, deltaHyra=input$boxDeltaRent, deltaPris=input$boxDeltaP,
+        rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno,
+        forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra
+      )     
+      dataDeltaSM <- dataDeltaSM %>% mutate(ToHighlight = ifelse(xDeltaSM == input$boxDeltaSM, "yes", "no"))
+      
+      print(dataDeltaSM)
+      
+      
+      # Graf
+      p <-   ggplot(data=dataDeltaSM, aes(x=xDeltaSM, y = yDeltaSM, fill = ToHighlight)) +
+        geom_bar(stat="identity") +
+        theme_bw(base_size = 12) +
+        theme(
+          # panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          # axis.ticks = element_blank(),
+          axis.title.y.right = element_text(angle = 0, vjust=1, face = "bold"),
+          axis.title.x = element_text(face = "bold") 
+        ) +
+        scale_y_continuous("Motsvarande hyra", position = "right", labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) +
+        scale_x_continuous("Avkastning på investeringar",  labels = format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)) + 
+        scale_fill_manual(values = c( "yes"="red", "no"="gray83"), guide = FALSE) +
+        geom_label(data=dataDeltaSM %>% filter(ToHighlight=="yes"), aes(x=xDeltaSM,y=yDeltaSM),
+                   label=paste(punkt, "kr", sep=" ") , 
+                   position = position_stack(vjust = 1.2), 
+                   color = "black", 
+                   fill="white")
+      
+      # Print the plot
+      print(p)
+    })
+    
+    
+    
+    
+      ################################
         # initiala kostnader köpa 
-        ################################
+      ################################
   
         formel_initiala_köpa <-  reactive({
                 pris <- input$boxPris
@@ -643,8 +1186,6 @@ shinyServer(function(input, output) {
             print(p)
           })
           
-          
-    
         ################################
         # Uppdelade kostnader
         ################################ 
@@ -658,6 +1199,48 @@ shinyServer(function(input, output) {
               rstocks=input$boxDeltaSM, avgift= input$boxAvgift, renovering=input$boxReno ,
               forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=  input$boxAndraHyra
             )     
+          })
+          
+          
+      ################################ 
+      # Jämförelse hyra/köpa 
+      ################################ 
+      table <- reactive({
+      
+      # Data 
+      tabledata <-matrix(cbind(
+           # Köpa 
+           formatnummer(formel_initiala_köpa()),
+           formatnummer(formel_totala_återkommande()),
+           formatnummer(formel_alternativkostnad()), 
+           formatnummer(formel_husprisvinst()),
+           formatnummer(formel_totala_kostnader()),
+           # Hyra 
+           formatnummer(formel_initiala_köpa()),
+           formatnummer(formel_totala_återkommande()),
+           formatnummer(formel_alternativkostnad()), 
+           formatnummer(formel_husprisvinst()),
+           formatnummer(formel_totala_kostnader())), 
+           ncol=2) 
+      
+      # Namn på matris
+      rownames(tabledata) <- c("Initiala kostnader   ", "Löpande kostnader   ", "Alternativkostnader   ", 
+                               "Vinster   ","<b>Totala kostnader</b>   ")
+      colnames(tabledata) <- c("Köpa","Hyra")
+      
+      HTML(
+        tableHTML(tabledata, 
+                  widths = rep(100, 3),
+                  collapse = 'separate_shiny', 
+                  spacing = '4px', 
+                  border=0
+                  )
+        
+              )
+            })
+        
+          
+          output$filetable <- renderUI({table()
           })
 
         # Titeltext
@@ -713,9 +1296,20 @@ shinyServer(function(input, output) {
         # texter 
         ################################ 
         
+      
+        
         # Bättre att hyra om: 
-        output$hyrabättre <- renderText({
-          paste("<h3><b>Om du kan hyra för mindre än:</b></h3>")
+        output$hyrabättre1 <- renderText({
+          paste("<h4><b>Om du kan hyra en liknande bostad för mindre än:</b></h4> <br> ")
+        })
+        
+        output$bättrehyra_värde <- renderText({
+          paste(formatnummer(minHyra())," kr per månad")
+        })
+      
+        
+        output$hyrabättre2 <- renderText({
+          paste("<h4><b>är det bättre att hyra</b></h4> ")
         })
         
       
@@ -748,21 +1342,25 @@ shinyServer(function(input, output) {
         
         # Bolån
         output$text_bolån <- renderText({
-          "<h4> Hur ser ditt bolån ut?</h4> Vad din ränta och kontantinsats är har stor påverkan på din månadskostnad."
+          paste("<h4> Hur ser ditt bolån ut?</h4> Din ränta och kontantinsats har stor påverkan på din månadskostnad. <p>",
+            "Den räntan du betalar är efter ett skatteavdrag på 30 procent. "
+           )
         })
+        
         
         belåningsgrad <- reactive({
           100-input$boxKI
                   })
         
         output$text_belåningsgrad <- renderText({
-          paste("<b> Med en kontantinsats på", input$boxKI," blir din belåningsgrad", belåningsgrad(), "procent. </b>")
+          paste(  "Med en större kontantinsats får du lägre räntebetalningar, men också högre alternativkostnader.<p> 
+                  Din kontantinsats plus din belåningsgrad är sammanlagt 100 procent. <p> Med en kontantinsats på", input$boxKI," blir din belåningsgrad alltså", belåningsgrad(), "procent. </b>")
         })
       
         #inkomst
         output$text_amortering <- renderText({
-                "<h4> Hur mycket ska du amortera? </h4> Dina amorteringsbetalningar beror på din belåningsgrad och hur stor 
-          din inkomst är relativt ditt lån. Du kan också välja att amortera mer, då minskar dina lånekostnad snabbare över tid."
+                "<h4> Hur mycket ska du amortera? </h4> Amorteringskravet gör att dina amorteringar beror på din belåningsgrad och 
+          din inkomst. Om du väljer att amortera mer än kravet så minskar dina lånekostnad snabbare över tid."
         })
         
         output$text_framtiden <- renderText({
@@ -776,11 +1374,13 @@ shinyServer(function(input, output) {
           "<h4> Avgifter, renoveringar, försäkringar och andra kostnader.</h4> Här kan du fylla i andra kostnader
             som kommer när du köper. " 
         })
-        
-        # output$text_hyra <- renderText({
-        #   "<b> Kostnader för att hyra.</b> " 
-        # })
-        
+
+        output$text_hyra <- renderText({
+          "<h4> Kostnader för att hyra.</h4> Det finns andra kostnader för att hyra, t.ex. 
+          en deposition eller en försäkring. 
+          "
+        })
+
         
         
 })
