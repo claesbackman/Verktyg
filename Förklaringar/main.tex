@@ -1,0 +1,94 @@
+Den här guiden beskriver hur verktyget räknar fram saker. 
+
+\section{Beräkning av motsvarande hyreskostnad}
+Hyreskostnader består av initiala kostnader, löpande kostnader, alternativkostnader och vinster, precis som för att köpa. 
+
+\subsubsection*{Initiala kostnader}
+Initiala kostnader för att hyra är deposition och eventuella avgifter för att hitta en lägenhet. 
+
+\begin{equation}
+	Initiala_h = h_1 * d
+\end{equation}
+där $h$ är hyra första året och $d$ är depositionstid. Så initiala kostnader räknas som deposition gånger den initiala hyran. 
+
+\subsubsection*{Löpande kostnader}
+Löpande kostnader består av hyreskostnader och summan av andra kostnader: 
+\begin{equation}
+	LK_h = h_1* \frac{1-(1+x)^t}{1-(1+x)} + AndraHyra *  t
+\end{equation}
+där $x$ är ökning i hyran och $AndraHyra$ är årskostnaden för andra kostnader för att hyra. 
+
+
+\subsubsection*{Alternativkostnad}
+Alternativkostnad med ökande hyra varje år beräknas enligt:\footnote{Se \url{https://money.stackexchange.com/questions/94899/which-compound-interest-formula-can-i-use-to-find-the-final-balance-with-monthly}.}
+\begin{equation}
+	fv = \frac{(p (1 + r) (-1 + (1 + r)^m) ((1 + r)^{(m y)} - (1 + x)^y))
+}{	(r (-1 + (1 + r)^m - x))}
+\end{equation}
+
+Där r är månatliga eller kvartsmässiga räntan, y är antal år, m är antal perioder per år, p är den ursprungliga hyran eller insatsen, och x är ökningen i den unsprungliga hyran. Om $m=$ kan vi skriva formeln som:
+\begin{equation}
+		fv = \frac{(p (1 + r)) ((1 + r)^y - (1 + x)^y))
+	}{	(r - x)}
+\end{equation}
+För att beräkna alternativkostnaden får vi lägga till alternativkostnaden för depositionen också, samt dra bort summan av hyran och depositionen. 
+\begin{eqnarray}
+	AK_h &= fv - \sum_{i=1}^{10} h_i + hd * (1+r)^t - hd  \\
+		  &=\frac{(h_1 (1 + r)) ((1 + r)^y - (1 + x)^y))}{	(r - x)} - h_1* \frac{1-(1+x)^t}{1-(1+x)} +  hd * (1+r)^t - hd
+\end{eqnarray}
+
+
+\subsubsection*{Vinster}
+Vinster är helt enkelt en återbetald deposition. 
+\begin{equation}
+	Vinster_h = -1* Initiala_h 
+\end{equation}
+
+\subsubsection*{Sammanlagda kostnader}
+De sammanlagda kostnaderna är helt enkelt summan av de ovanstående kostnaderna: 
+\begin{eqnarray*}
+	Sammanlagt &= Initiala_h + LK_h + AK_h + Vinster_h \\
+	&= h_1 d + h_1* \frac{1-(1+x)^t}{1-(1+x)} + AndraHyra *  t  \\ 
+	&+ \frac{(h_1 (1 + r) ((1 + r)^y - (1 + x)^y))}{(r - x)} - \\ 
+	&h_1* \frac{1-(1+x)^t}{1-(1+x)} +  hd * (1+r)^t - h_1 d  -h_1 d 
+\end{eqnarray*}
+Efter att ha skrivit om har vi:
+\begin{eqnarray*}
+		&Sammanlagt = h_1 d- h_1 d  -h_1 d  +  h_1* \frac{1-(1+x)^t}{1-(1+x)} - h_1* \frac{1-(1+x)^t}{1-(1+x)}  \\
+		 &+ AndraHyra *  t + \frac{(h_1 (1 + r) ((1 + r)^y - (1 + x)^y))}{(r - x)} +  hd * (1+r)^t \\
+	&=  AndraHyra *  t + \frac{(h_1 (1 + r) ((1 + r)^y - (1 + x)^y))}{(r - x)} +  hd * (1+r)^t  - h_1 d 
+%	& =  AndraHyra *  t  + \frac{(h_1 (1 + r)) ((1 + r)^y - (1 + x)^y))}{(r - x)} +  hd * (1+r)^t  - h_1 d
+\end{eqnarray*}
+
+Nu vill vi att sammanlagda kostnader ska bli lika med kostnaden för att köpa:
+\begin{eqnarray*}
+	&Sammanlagda_k = Sammanlagda_h  \\
+	& sammanlagda_k =  AndraHyra *  t + \frac{(h_1 (1 + r) ((1 + r)^y - (1 + x)^y))}{(r - x)} +  h_1d * (1+r)^t  - h_1 d \\
+	& sammanlagda_k -  AndraHyra *  t = \frac{h_1 ((1 + r) ((1 + r)^y - (1 + x)^y)) }{(r - x)} +  h_1d * (1+r)^t  - h_1 d \\
+\end{eqnarray*}
+Om vi bryter ut $h_1$: 
+\begin{eqnarray*}
+		& sammanlagda_k -  AndraHyra *  t = \\
+		&h_1 ((1 + r) ((1 + r)^y - (1 + x)^y)+ (r-x)d(1+r)^t -d(r-x)) \frac{1}{(r - x)} \\
+\end{eqnarray*}
+Så kan vi skriva om så att vi får en hyra baserat på totala kostnader för att köpa och hyra: 
+\begin{eqnarray*}
+	& \frac{(sammanlagda_k -  AndraHyra *  t)(r - x)}{((1 + r) ((1 + r)^y - (1 + x)^y)+ (r-x)d(1+r)^t -d(r-x))} = h_1  \\
+\end{eqnarray*}
+
+%
+%Vinster: 
+%Vinster=-1*deposition
+%
+%
+%Hur vi hittar hyreskostnaden per månad: 
+%kostnad_köpa=initiala+ löpande+alternativkostnader-vinster
+%=deposition+ Total hyra+andra kostnader för att hyra+fv-Total hyra+deposition*(1+r)^tid-deposition
+%hd+h*((1-(1+öknin〖g)〗^tid)/(1-(1+ökning) ))+AndraHyra*12*tid+  (hyra_1*(1+r)*[(1+r)^tid-(1+hyresökning)^tid])/((r-hyresökning))
+%
+%
+
+
+
+
+

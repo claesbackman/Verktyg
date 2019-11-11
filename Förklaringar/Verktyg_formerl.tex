@@ -1,0 +1,181 @@
+\documentclass[12pt,a4paper]{article} % use larger type; default would be 10pt
+
+\usepackage{fullpage}  %To make the art22icle go to the full page
+\usepackage[a4paper, hmargin=1.2in,vmargin=1in]{geometry} %To set the margins. hmargin is for the left and right margin and vmargin is for the top and bottom margin
+\usepackage{setspace}  %To use double spacing
+\usepackage{graphicx}  %To include graphics
+\usepackage{subfig}    %To place figures side-by-side
+\usepackage{booktabs}  %To make professional looking tables
+\usepackage{threeparttablex}% For Notes below table
+\usepackage{rotating}  %To make sideways tables
+\usepackage{float}     %To float figures and tables
+\usepackage{amsmath} %Helps with typesetting math
+\usepackage{verbatim} %To allow for verbatim text and multiline comments
+\usepackage{caption}  %For a top and bottom caption or multiple captions
+\usepackage[toc,page]{appendix} %To offset appendices
+\usepackage{changepage} %To change the margins of the page on the fly,
+\usepackage{tabularx}  
+\usepackage[parfill]{parskip}
+\usepackage[longnamesfirst]{natbib}
+\usepackage[pagebackref=true,hyperfootnotes=false]{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	citecolor=blue,
+}
+\usepackage{afterpage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Todo notes
+\usepackage{lipsum}
+\usepackage{xargs}                      % Use more than one optional parameter in a new commands
+\usepackage[pdftex,dvipsnames]{xcolor}  % Coloured text etc.
+% 
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TO MAKE ESTOUT WORK BETTER http://tex.stackexchange.com/questions/97764/regression-tables-made-with-esttab-in-stata-have-columns-with-different-widths
+
+% *****************************************************************
+% siunitx
+% *****************************************************************
+\newcommand{\sym}[1]{\rlap{#1}} % Thanks to Joseph Wright & David Carlisle
+
+\usepackage{siunitx}
+\sisetup{
+	detect-mode,
+	group-digits		= true,
+	input-symbols		= ( ) [ ] - +,
+	table-align-text-post	= false,
+	input-signs             = ,
+	group-separator = {,}
+}
+
+% Character substitution that prints brackets and the minus symbol in text mode. Thanks to David Carlisle
+\def\yyy{%
+	\bgroup\uccode`\~\expandafter`\string-%
+	\uppercase{\egroup\edef~{\noexpand\text{\llap{\textendash}\relax}}}%
+	\mathcode\expandafter`\string-"8000 }
+
+\def\xxxl#1{%
+	\bgroup\uccode`\~\expandafter`\string#1%
+	\uppercase{\egroup\edef~{\noexpand\text{\noexpand\llap{\string#1}}}}%
+	\mathcode\expandafter`\string#1"8000 }
+
+\def\xxxr#1{%
+	\bgroup\uccode`\~\expandafter`\string#1%
+	\uppercase{\egroup\edef~{\noexpand\text{\noexpand\rlap{\string#1}}}}%
+	\mathcode\expandafter`\string#1"8000 }
+
+\def\textsymbols{\xxxl[\xxxr]\xxxl(\xxxr)\yyy}
+
+
+\makeatletter
+\newcommand*{\centerfloat}{%
+	\parindent \z@
+	\leftskip \z@ \@plus 1fil \@minus \textwidth
+	\rightskip\leftskip
+	\parfillskip \z@skip}
+\makeatother
+
+
+% *****************************************************************
+% Estout related things
+% *****************************************************************
+\let\estinput=\input % define a new input command so that we can still flatten the document
+
+\newcommand{\estwide}[3]{
+	\vspace{.75ex}{
+		\textsymbols% Note the added command here
+		\begin{tabular*}
+			{\textwidth}{@{\hskip\tabcolsep\extracolsep\fill}l*{#2}{#3}}
+			\toprule
+			\estinput{#1}
+			\bottomrule
+			\addlinespace[.75ex]
+		\end{tabular*}
+	}
+}
+
+\newcommand{\estauto}[3]{
+	\vspace{.75ex}{
+		\textsymbols% Note the added command here
+		\begin{tabular}{l*{#2}{#3}}
+			\toprule
+			\toprule
+			\estinput{#1}
+			\bottomrule
+			\bottomrule
+			\addlinespace[.75ex]
+		\end{tabular}
+	}
+}
+
+% Allow line breaks with \\ in specialcells
+\newcommand{\specialcell}[2][c]{%
+	\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% *****************************************************************
+% Custom subcaptions
+% *****************************************************************
+% Note/Source/Text after Tables
+% The new approach using threeparttables to generate notes that are the exact width of the table.
+\newcommand{\Figtext}[1]{%
+	\begin{tablenotes}[para,flushleft]
+		\hspace{6pt}
+		\hangindent=1.75em
+		#1
+	\end{tablenotes}
+}
+\newcommand{\Fignote}[1]{\Figtext{\emph{Note:~}~#1}}
+\newcommand{\Figsource}[1]{\Figtext{\emph{Source:~}~#1}}
+\newcommand{\Starnote}{\Figtext{* p < 0.1, ** p < 0.05, *** p < 0.01. Standard errors in parentheses.}}% Add significance note with \starnote
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Citation manager 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage[style=chicago-authordate]{biblatex}
+
+\doublespacing
+\begin{document}
+
+
+	\author{
+		Claes B\"{a}ckman
+	}
+			
+	\title{Ska du köpa eller hyra? En guide till Verktyget}
+	\date{\today}
+	
+	\maketitle
+	
+%	
+%\begin{abstract}
+%\begin{singlespace}
+%
+%\end{singlespace}
+%\end{abstract}
+
+
+	\input{main.tex}
+
+%	\bibliographystyle{authordate1}
+%	\bibliography{my_library}
+	
+
+%		\input{Figures.tex}
+
+	
+%	\listoftodos[Notes]
+	
+\end{document}

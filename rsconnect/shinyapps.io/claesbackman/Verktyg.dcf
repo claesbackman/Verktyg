@@ -5,8 +5,8 @@ account: claesbackman
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1388205
-bundleId: 2563630
+bundleId: 2573657
 url: https://claesbackman.shinyapps.io/Verktyg/
-when: 1572895373.34661
+when: 1573207337.51356
 asMultiple: FALSE
 asStatic: FALSE
