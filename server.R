@@ -1,10 +1,10 @@
-library(shiny)
-library(ggplot2)
-library(tidyverse)
-library(scales)
-library(tableHTML)
-library(shinydashboard)
-library(rsconnect)
+# library(shiny)
+# #library(ggplot2)
+# library(tidyverse)
+# library(scales)
+# library(tableHTML)
+# library(shinydashboard)
+# library(rsconnect)
 
 
 formatnummer <- format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE, digit=0)

@@ -1,8 +1,8 @@
-library(shiny)
-library(shinythemes)
-library(markdown)
-library(jpeg)
-library(shinyWidgets)
+# library(shiny)
+# library(shinythemes)
+# library(markdown)
+# library(jpeg)
+# library(shinyWidgets)
 
 # library(shinydashboard)
 
@@ -15,18 +15,8 @@ tags$style(HTML("
     "))
     ),
     theme=shinytheme("sandstone"),
-
-    fixedRow(
-      column(12,
-      p(img(src="LU_Ekonomihögskolan_RGB_SV.png",height="30%",width="30%")
-      ))
-    ),
     
-    # column(3, p("Klicka här för läsa mer om kursen. "))
-    # ),
-    
-    # column(3, p("Klicka här för läsa mer om kursen. "))
-    titlePanel("Ska du köpa eller hyra?"),
+        titlePanel("Ska du köpa eller hyra?"),
     
     # huvudpanel
     fixedRow(column(8, 
@@ -244,9 +234,7 @@ tags$style(HTML("
            HTML("<hr color='grey' >"), 
            br(),
            
-    HTML("Denna sida har skapats som en del i en kurs i personlig finans. 
-         Du kan läsa mer om kursen här (LÄNK). 
-         Denna sida har designats av <a href='https://sites.google.com/view/claesbackman/home'><font color='1508ff'>Claes Bäckman.</font></a>")
+    HTML("Denna sida har designats av <a href='https://sites.google.com/view/claesbackman/home'><font color='1508ff'>Claes Bäckman.</font></a>")
     ), 
     br())
     

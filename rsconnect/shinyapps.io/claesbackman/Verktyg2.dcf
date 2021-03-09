@@ -1,13 +1,13 @@
-name: Verktyg
-title: Verktyg
+name: Verktyg2
+title: Verktyg2
 username:
 account: claesbackman
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 1388205
-bundleId: 4323067
-url: https://claesbackman.shinyapps.io/Verktyg/
-when: 1615327459.23562
+appId: 3763776
+bundleId: 4323019
+url: https://claesbackman.shinyapps.io/Verktyg2/
+when: 1615326558.07824
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: ~$K?pa eller hyra_1.xlsx|~$ormler.docx|Bol?nekalkyl.xlsx|Formler.docx|intro.txt|K?pa eller hyra_1.xlsx|README.md|www/Logo_lusem.png|www/LU_Ekonomih?gskolan_RGB_SV.png|F?rklaringar
