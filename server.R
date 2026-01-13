@@ -1,4 +1,4 @@
-formatnummer <- format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE, digits=0)
+formatnummer <- format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)
 
 shinyServer(function(input, output) {
 
