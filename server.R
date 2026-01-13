@@ -880,11 +880,11 @@ shinyServer(function(input, output) {
     
     tableKostnader <- reactive({
       
-    sammanlagt <- input$boxAvgift + input$boxFörsäkring + input$boxAndraKöpa 
-      
+    sammanlagt <- input$boxAvgift + input$boxFörsäkring + input$boxAndraKöpa
+
       # Sequence Kostnader
-      min <- sammanlagt -  7500 
-      max <- sammanlagt +  7500
+      min <- max(0, sammanlagt - 7500)  # Don't allow negative costs
+      max <- sammanlagt + 7500
       seq <-  seq(from=min+500, to=max, by=500)
       
       # Första värdet 
