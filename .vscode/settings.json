@@ -1,0 +1,19 @@
+{
+  // R Language Support
+  "r.rterm.windows": "C:\\Users\\ClaesBäckman\\AppData\\Local\\Programs\\R\\R-4.5.2\\bin\\x64\\R.exe",
+  "r.rterm.option": [],
+  "r.alwaysUseActiveTerminal": true,
+  "r.bracketedPaste": true,
+  
+  // File associations
+  "files.associations": {
+    "*.R": "r",
+    "*.Rmd": "rmarkdown"
+  },
+  
+  // R extension settings (if R extension is installed)
+  "r.lsp.path": "",
+  "r.lsp.args": [],
+  "r.lsp.diagnostics": true,
+  "r.lsp.completion.enabled": true
+}

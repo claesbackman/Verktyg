@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(powershell.exe -Command \"Get-Command Rscript -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Name ''R'',''Rscript'',''rsession'' -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2; echo ''Processes stopped''\")"
     ]
   }
 }

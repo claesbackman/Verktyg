@@ -349,9 +349,9 @@ shinyServer(function(input, output) {
     
     # värdet för punkten
     output$grafRanta <- renderPlot({
-      min <- input$boxR - 2 
+      min <- input$boxR - 2
       max <- input$boxR + 2
-      seq <-  seq(from=min, to=max, by=0.1)
+      seq <-  seq(from=min+0.1, to=max, by=0.1)  # Match tableRanta
       # seq <-  seq(from=0, to=15, by=0.1)
       # All data 
       xR <- seq
