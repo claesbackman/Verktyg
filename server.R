@@ -67,9 +67,9 @@ shinyServer(function(input, output) {
     ränta <- ranta* 0.7 / 100
     r_stocks <- rstocks / 100
     betalningar <- amortering / 100 * skuld
-    totalabetalningar <- input$BoxAmort * skuld / 100+
-                        (input$boxAndraKöpa + input$boxFörsäkring + input$boxAvgift)*12+
-                        input$boxReno*input$boxPris/100 
+    totalabetalningar <- amortering * skuld / 100+
+                        (andrakopa + forsakring + avgift)*12+
+                        renovering*pris/100 
     husprisökning <- deltaPris  / 100
     renoveringar_2 <- renovering/100 * pris * tid
     hyresökning <- deltaHyra / 100
