@@ -1,12 +1,3 @@
-# library(shiny)
-# library(shinythemes)
-# library(markdown)
-# library(jpeg)
-# library(shinyWidgets)
-
-# library(shinydashboard)
-
-    
 shinyUI(
 fluidPage(
 tags$head(
@@ -202,13 +193,6 @@ tags$style(HTML("
     
     sliderInput("boxDeposition", "Deposition", value = 1, min=0,  max= 12, step=1, ticks=FALSE, width="95%", post  = " månader"),
     br()
-    # checkboxInput("smooth", "Smooth"),
-    # conditionalPanel(
-    #   condition = "input.smooth == true",
-    #   selectInput("smoothMethod", "Method",
-    #               list("lm", "glm", "gam", "loess", "rlm"))
-    # )
-    #sliderInput("boxHyra", "Hyra", value = 1000, min=0,  max= 100000, step=100, ticks=FALSE, width="95%")
     ), #  column
     column(4, fixedPanel(top = "30%", # setBackgroundColor("ghostwhite"),
     htmlOutput("hyrabättre1"),
