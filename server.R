@@ -9,15 +9,15 @@ shinyServer(function(input, output) {
     # Provide default values when they are NULL
 
     deltaPris_val <- reactive({
-      if (is.null(deltaPris_val())) 3 else deltaPris_val()
+      if (is.null(input$boxDeltaP)) 3 else input$boxDeltaP
     })
 
     deltaHyra_val <- reactive({
-      if (is.null(deltaHyra_val())) 2 else deltaHyra_val()
+      if (is.null(input$boxDeltaRent)) 2 else input$boxDeltaRent
     })
 
     deltaSM_val <- reactive({
-      if (is.null(deltaSM_val())) 7 else deltaSM_val()
+      if (is.null(input$boxDeltaSM)) 7 else input$boxDeltaSM
     })
 
     ################################
