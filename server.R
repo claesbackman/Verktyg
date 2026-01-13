@@ -606,8 +606,8 @@ shinyServer(function(input, output) {
     #########################
     
     tableDeltaP <- reactive({
-      # Sequence 
-      min <- deltaPris_val() - 10
+      # Sequence
+      min <- max(0, deltaPris_val() - 10)  # Don't allow negative percentages
       max <- deltaPris_val() + 10
       seq <-  seq(from=min+0.5, to=max, by=0.5)
       
@@ -700,8 +700,8 @@ shinyServer(function(input, output) {
     #########################
     
     tableDeltaHyra <- reactive({
-      # Sequence 
-      min <- deltaHyra_val() - 10 
+      # Sequence
+      min <- max(0, deltaHyra_val() - 10)  # Don't allow negative percentages
       max <- deltaHyra_val() + 10
       seq <-  seq(from=min+0.5, to=max, by=0.5)
       
@@ -793,9 +793,9 @@ shinyServer(function(input, output) {
     #########################
     
     tableDeltaSM <- reactive({
-      # Sequence 
-      min <- deltaSM_val() -10
-      max <- deltaSM_val() +10
+      # Sequence
+      min <- max(0, deltaSM_val() - 10)  # Don't allow negative percentages
+      max <- deltaSM_val() + 10
       seq <-  seq(from=min+0.5, to=max, by=0.5)
       
       # Första värdet 
