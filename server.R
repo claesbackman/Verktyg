@@ -124,13 +124,13 @@ shinyServer(function(input, output) {
   # Check for division by zero when investment return equals rent increase
   if (abs(r_stocks - hyresökning) < 0.0001) {
     # When rates are equal, use simplified formula (average cost per month)
-    round((totala_kostnader - totandrahyra) / (tid * 12), digit=0)
+    round((totala_kostnader - totandrahyra) / (tid * 12), digits=0)
   } else {
     # Standard formula when rates differ
     # This is a present value calculation for a growing annuity
     round((totala_kostnader- totandrahyra)*(r_stocks - hyresökning)/
         ((1+r_stocks)*((1+r_stocks)^tid-(1+hyresökning)^tid)+(r_stocks-hyresökning)*deposition/12*(1+r_stocks)^tid-(r_stocks-hyresökning)*deposition/12)/12
-    ,digit=0)
+    ,digits=0)
   }
 
     }
@@ -1096,7 +1096,7 @@ shinyServer(function(input, output) {
           ränta <- input$boxR * 0.7 / 100
           skuldsättning_slut <- (1-input$boxKI/100) - tid*amortering 
           if(input$boxKI == 100) {
-           round(0, digit=0)
+           round(0, digits=0)
           }
           else {
           if(skuldsättning_slut>0) {
