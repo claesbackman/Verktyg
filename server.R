@@ -449,7 +449,7 @@ shinyServer(function(input, output) {
     output$grafAmort <- renderPlot({
       min <- input$BoxAmort - 2
       max <- input$BoxAmort + 2
-      seq <-  seq(from=min, to=max, by=0.1)
+      seq <-  seq(from=min+0.1, to=max, by=0.1)  # Match the table sequence
       # seq <-  seq(from=0, to=15, by=0.1)
       # All data 
       xAmort <- seq
@@ -546,7 +546,7 @@ shinyServer(function(input, output) {
     output$grafKI<- renderPlot({
       min <- input$boxKI - 15
       max <- input$boxKI + 20
-      seq <-  seq(from=min, to=max, by=1)
+      seq <-  seq(from=min, to=max-1, by=1)  # Match the table sequence
       # seq <-  seq(from=0, to=15, by=0.1)
       # All data 
       xKI <- seq
@@ -638,7 +638,7 @@ shinyServer(function(input, output) {
     
     # värdet för punkten
     output$grafDeltaP<- renderPlot({
-      min <- deltaPris_val() - 10
+      min <- max(0, deltaPris_val() - 10)  # Match the table sequence
       max <- deltaPris_val() + 10
       seq <-  seq(from=min, to=max, by=0.5)
       # seq <-  seq(from=0, to=15, by=0.1)
@@ -732,7 +732,7 @@ shinyServer(function(input, output) {
     
     # värdet för punkten
     output$grafDeltaHyra<- renderPlot({
-      min <- deltaHyra_val() - 10 
+      min <- max(0, deltaHyra_val() - 10)  # Match the table sequence
       max <- deltaHyra_val() + 10
       seq <-  seq(from=min, to=max, by=0.5)
 
@@ -825,8 +825,8 @@ shinyServer(function(input, output) {
     
     # värdet för punkten
     output$grafDeltaSM <- renderPlot({
-      min <- deltaSM_val() -10
-      max <- deltaSM_val() +10
+      min <- max(0, deltaSM_val() - 10)  # Match the table sequence
+      max <- deltaSM_val() + 10
       seq <-  seq(from=min, to=max, by=0.5)
       # seq <-  seq(from=0, to=15, by=0.1)
       # All data 
@@ -917,9 +917,9 @@ shinyServer(function(input, output) {
       
       
       sammanlagt <- input$boxAvgift + input$boxFörsäkring + input$boxAndraKöpa
-      
-      min <- sammanlagt -  7500 
-      max <- sammanlagt +  7500
+
+      min <- max(0, sammanlagt - 7500)  # Match the table sequence
+      max <- sammanlagt + 7500
       seq <-  seq(from=min, to=max, by=500)
       # seq <-  seq(from=0, to=15, by=0.1)
       # All data 
