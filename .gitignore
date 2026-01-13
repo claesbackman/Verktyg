@@ -2,3 +2,14 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Temporary files
+tmpclaude-*
+*.log
+.DS_Store
+
+# Keep only organized structure
+/server.R
+/ui.R
+/global.R
+/rsconnect

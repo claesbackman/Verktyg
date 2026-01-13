@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ska du köpa eller hyra? - Finansiell kalkylator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 50px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .content {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .screenshot {
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .formula {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 1.1em;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Ska du köpa eller hyra?</h1>
+            <p class="subtitle">En omfattande finansiell kalkylator för att hjälpa dig fatta det rätta beslutet</p>
+            <a href="https://claesbackman.shinyapps.io/Verktyg/" class="cta-button" target="_blank">
+                Öppna kalkylatorn →
+            </a>
+        </header>
+
+        <div class="content">
+            <h2>Om verktyget</h2>
+            <p>
+                Det är inte enkelt att jämföra vad det kostar att köpa en bostad med vad det kostar att hyra.
+                Denna kalkylator tar hänsyn till alla viktiga kostnader och beräknar en <strong>motsvarande hyra</strong>
+                – det månadshyra som skulle ge samma totalkostnad som att köpa bostaden.
+            </p>
+            <p>
+                <strong>Enkel regel:</strong> Om du kan hitta en liknande bostad för lägre hyra än den beräknade
+                "motsvarande hyran", är det ekonomiskt mer fördelaktigt att hyra.
+            </p>
+
+            <h3>✨ Huvudfunktioner</h3>
+            <div class="features">
+                <div class="feature-card">
+                    <h4>📊 10 Interaktiva grafer</h4>
+                    <p>Visa hur motsvarande hyra ändras baserat på bostadspris, tid, ränta, amortering, kontantinsats och fler variabler.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💰 Komplett kostnadsanalys</h4>
+                    <p>Tar hänsyn till initiala kostnader, löpande kostnader, alternativkostnader och husprisvinster.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📈 Framtidsantaganden</h4>
+                    <p>Anpassa förväntningar på husprisökning, hyresökning och avkastning på investeringar.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🇸🇪 Svenska skatteregler</h4>
+                    <p>Inkluderar ränteavdrag (30% på 70% av räntan) och kapitalvinstskatt (22/30 av vinst beskattas med 30%).</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔄 Känslighetsanalys</h4>
+                    <p>Se direkt hur små förändringar i parametrar påverkar ditt beslut.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📱 Responsiv design</h4>
+                    <p>Fungerar lika bra på dator, surfplatta och mobil.</p>
+                </div>
+            </div>
+
+            <h3>🧮 Vad kalkylatorn tar hänsyn till</h3>
+
+            <h4>1. Initiala kostnader</h4>
+            <ul>
+                <li>Kontantinsats (15-100% av bostadspriset)</li>
+                <li>Flyttkostnader och besiktningar</li>
+            </ul>
+
+            <h4>2. Löpande kostnader</h4>
+            <ul>
+                <li>Räntebetalningar (med skatteavdrag)</li>
+                <li>Avgifter till bostadsrättsförening</li>
+                <li>Hemförsäkring</li>
+                <li>Renoveringar (procent av bostadspriset)</li>
+                <li>Andra återkommande kostnader</li>
+            </ul>
+
+            <h4>3. Alternativkostnader</h4>
+            <ul>
+                <li>Avkastning du går miste om genom att inte investera kontantinsatsen</li>
+                <li>Avkastning på amorteringar och kostnader om de investerats istället</li>
+                <li>Beräknas med sammansatt ränta och regelbundna insättningar</li>
+            </ul>
+
+            <h4>4. Kapitalvinster/förluster</h4>
+            <ul>
+                <li>Husprisökning över tid</li>
+                <li>Kapitalvinstskatt (22/30 av vinst beskattas med 30%)</li>
+                <li>Renoveringar minskar skattepliktig vinst</li>
+                <li>Kontantinsats återfås skattefritt</li>
+            </ul>
+
+            <h3>📐 Teknisk detalj: Motsvarande hyra-formeln</h3>
+            <p>
+                Kalkylatorn använder en växande annuitetsformel för att beräkna nuvärdet av framtida hyror:
+            </p>
+            <div class="formula">
+motsvarande_hyra = (totalkostnad_köp - hyrakostnader) × (r - g) /<br>
+&nbsp;&nbsp;[(1+r) × ((1+r)^t - (1+g)^t) + (r-g) × d/12 × (1+r)^t - (r-g) × d/12] / 12
+<br><br>
+där:<br>
+&nbsp;&nbsp;r = avkastning på investeringar<br>
+&nbsp;&nbsp;g = hyresökningstakt<br>
+&nbsp;&nbsp;t = tidshorisont i år<br>
+&nbsp;&nbsp;d = deposition i månader
+            </div>
+
+            <h3>🛠️ Teknisk stack</h3>
+            <div class="tech-stack">
+                <span class="tech-badge">R Shiny</span>
+                <span class="tech-badge">ggplot2</span>
+                <span class="tech-badge">tidyverse</span>
+                <span class="tech-badge">scales</span>
+                <span class="tech-badge">tableHTML</span>
+                <span class="tech-badge">shinythemes</span>
+            </div>
+
+            <h3>📝 Antaganden</h3>
+            <p><strong>Standardvärden för framtidsantaganden:</strong></p>
+            <ul>
+                <li>Husprisökning: 3% årligen</li>
+                <li>Hyresökning: 2% årligen</li>
+                <li>Avkastning på investeringar: 7% årligen</li>
+            </ul>
+            <p>
+                Dessa värden kan anpassas i applikationen för att matcha dina egna förväntningar.
+            </p>
+
+            <h3>💻 Kör lokalt</h3>
+            <p>För att köra applikationen lokalt på din dator:</p>
+            <ol>
+                <li>Installera R från <a href="https://www.r-project.org/" target="_blank">r-project.org</a></li>
+                <li>Installera RStudio från <a href="https://posit.co/download/rstudio-desktop/" target="_blank">posit.co</a></li>
+                <li>Klona detta repository:
+                    <div class="formula">git clone https://github.com/claesbackman/Verktyg.git</div>
+                </li>
+                <li>Öppna <code>ui.R</code> eller <code>server.R</code> i RStudio</li>
+                <li>Installera beroenden (RStudio kommer att föreslå detta automatiskt)</li>
+                <li>Klicka på "Run App"-knappen i RStudio</li>
+            </ol>
+
+            <h3>📄 Licens och användning</h3>
+            <p>
+                Detta verktyg är utvecklat för att hjälpa människor fatta informerade beslut om boende.
+                Tänk på att resultaten baseras på dina antaganden om framtiden, och verkliga utfall kan variera.
+            </p>
+        </div>
+
+        <div class="content">
+            <h2>🚀 Kom igång nu</h2>
+            <p style="text-align: center; font-size: 1.2em;">
+                Redo att ta reda på om du ska köpa eller hyra?
+            </p>
+            <p style="text-align: center; margin-top: 30px;">
+                <a href="https://claesbackman.shinyapps.io/Verktyg/" class="cta-button" target="_blank">
+                    Öppna kalkylatorn →
+                </a>
+            </p>
+        </div>
+
+        <footer>
+            <p>
+                Designad av <a href="https://sites.google.com/view/claesbackman/home" target="_blank">Claes Bäckman</a>
+            </p>
+            <p>
+                <a href="https://github.com/claesbackman/Verktyg" target="_blank">Se källkod på GitHub</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
