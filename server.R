@@ -171,10 +171,10 @@ shinyServer(function(input, output) {
    
    # värdet för punkten
     output$grafPris <- renderPlot({
-      
+
      min <- input$boxPris - 1000000
      max <- input$boxPris + 1000000
-     seq <-  seq(from=min, to=max, by=50000)
+     seq <-  seq(from=min+50000, to=max, by=50000)  # Match tablePris
 
     # All data 
     xValue <- seq
