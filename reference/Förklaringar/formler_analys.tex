@@ -1,0 +1,267 @@
+\section{Fullständig formelanalys och korrigeringar}
+
+\subsection{Sammanfattning av granskning}
+
+Denna sektion dokumenterar samtliga formler i kalkylatorn baserat på den faktiska implementeringen i koden, samt identifierar potentiella fel.
+
+\section{Alternativkostnader - Detaljerad analys}
+
+\subsection{Alternativkostnad för KÖPA (✓ Korrekt)}
+
+\textbf{Kod (server.R, rad 1108):}
+\begin{verbatim}
+(kontantinsats_kr+flyttkostnader)*(1+r_stocks)^tid -
+kontantinsats_kr - flyttkostnader +
+(betalningar*(((1 + r_stocks)^tid - 1) / r_stocks)) -
+betalningar*tid
+\end{verbatim}
+
+\textbf{LaTeX-form:}
+
+Del 1 - Alternativkostnad för kontantinsats och flyttkostnad:
+\begin{equation}
+    AK_1 = (P \cdot k_i + K_f) \cdot (1 + r_s)^t - (P \cdot k_i + K_f)
+\end{equation}
+
+Del 2 - Alternativkostnad för löpande betalningar (annuitet):
+
+Årliga betalningar:
+\begin{equation}
+    B = S \cdot a + (K_a + F + A) \cdot 12 + P \cdot R
+\end{equation}
+
+Future value av annuitet:
+\begin{equation}
+    FV = B \cdot \frac{(1 + r_s)^t - 1}{r_s}
+\end{equation}
+
+Alternativkostnad (vinst över vad som betalats):
+\begin{equation}
+    AK_2 = FV - B \cdot t = B \cdot \left(\frac{(1 + r_s)^t - 1}{r_s} - t\right)
+\end{equation}
+
+\textbf{Total alternativkostnad för köpa:}
+\begin{equation}
+    AK_{köpa} = AK_1 + AK_2
+\end{equation}
+
+\textbf{Förklaring:} Denna formel är korrekt implementerad. Den beräknar vad kapitalet hade kunnat växa till om det investerats i stället för att användas till bostaden.
+
+\subsection{Alternativkostnad för HYRA (⚠ Med noteringar)}
+
+\textbf{Kod (server.R, rader 1195-1197, standard case):}
+\begin{verbatim}
+(hyra * (1 + avkastning) * avkastning *
+ ((1 + avkastning)^tid - (1 + hyresökning)^tid)) /
+(avkastning - hyresökning) -
+hyra * ((1-(1+hyresökning)^tid)/(1-(1+hyresökning))) +
+depositionstid*minHyra()*(1+avkastning)^tid - minHyra()
+\end{verbatim}
+
+där:
+\begin{itemize}
+    \item \texttt{hyra} = $h_1 \cdot 12$ (årlig hyra)
+    \item \texttt{avkastning} = $r_s$ (som decimal, t.ex. 0.07 för 7\%)
+    \item \texttt{hyresökning} = $\Delta H$ (som decimal)
+    \item \texttt{depositionstid} = $d$ (antal månader)
+    \item \texttt{minHyra()} = $h_1$ (månadshyra)
+\end{itemize}
+
+\subsubsection{Del 1: Future value av växande hyresbetalningar}
+
+\textbf{Formel för FV av växande annuitet:}
+
+Om du hade investerat varje hyresbetalning i stället för att betala den, och hyran växer varje år:
+
+\begin{equation}
+    FV_{hyra} = h_1 \cdot 12 \cdot (1 + r_s) \cdot r_s \cdot \frac{(1 + r_s)^t - (1 + \Delta H)^t}{r_s - \Delta H}
+\end{equation}
+
+\textbf{Specialfall när $r_s = \Delta H$:}
+\begin{equation}
+    FV_{hyra} = h_1 \cdot 12 \cdot t \cdot r_s
+\end{equation}
+
+\textbf{Specialfall när $\Delta H = 0$ (konstant hyra):}
+\begin{equation}
+    FV_{hyra} = h_1 \cdot 12 \cdot (1 + r_s) \cdot r_s \cdot \frac{(1 + r_s)^t - 1}{r_s}
+\end{equation}
+
+\subsubsection{Del 2: Subtrahera faktiskt betald hyra}
+
+Total hyra betald över $t$ år (geometrisk serie):
+\begin{equation}
+    \text{Betald hyra} = h_1 \cdot 12 \cdot \frac{1 - (1 + \Delta H)^t}{1 - (1 + \Delta H)}
+\end{equation}
+
+\textbf{OBS:} Formeln kan också skrivas (genom att multiplicera täljare och nämnare med -1):
+\begin{equation}
+    \text{Betald hyra} = h_1 \cdot 12 \cdot \frac{(1 + \Delta H)^t - 1}{\Delta H}
+\end{equation}
+
+\subsubsection{Del 3: Alternativkostnad för deposition}
+
+\textbf{Kod:}
+\begin{verbatim}
+depositionstid*minHyra()*(1+avkastning)^tid - minHyra()
+\end{verbatim}
+
+\textbf{Översatt till matematik:}
+\begin{equation}
+    AK_{dep,kod} = d \cdot h_1 \cdot (1 + r_s)^t - h_1
+\end{equation}
+
+\textbf{⚠ POTENTIELLT FEL:}
+
+Depositionen är $I_h = d \cdot h_1$ (t.ex. 2 månadshyror).
+
+Om denna hade investerats skulle den växa till:
+\begin{equation}
+    FV_{dep} = d \cdot h_1 \cdot (1 + r_s)^t
+\end{equation}
+
+Alternativkostnaden (vinsten) är:
+\begin{equation}
+    AK_{dep,korrekt} = d \cdot h_1 \cdot (1 + r_s)^t - d \cdot h_1 = d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}
+
+\textbf{Men koden har:}
+\begin{equation}
+    AK_{dep,kod} = d \cdot h_1 \cdot (1 + r_s)^t - h_1
+\end{equation}
+
+\textbf{Skillnad:}
+\begin{align}
+    AK_{dep,korrekt} - AK_{dep,kod} &= d \cdot h_1 \cdot [(1 + r_s)^t - 1] - [d \cdot h_1 \cdot (1 + r_s)^t - h_1] \\
+    &= d \cdot h_1 - d \cdot h_1 - h_1 + h_1 \\
+    &= -h_1 \cdot (d - 1)
+\end{align}
+
+Detta betyder att koden undervärderar alternativkostnaden med $h_1 \cdot (d - 1)$ kronor.
+
+\textbf{Exempel:} Om $h_1 = 10000$ kr, $d = 2$ månader, $r_s = 7\%$, $t = 10$ år:
+\begin{itemize}
+    \item Korrekt AK: $2 \cdot 10000 \cdot [(1.07)^{10} - 1] = 20000 \cdot 0.9672 = 19344$ kr
+    \item Kodens AK: $2 \cdot 10000 \cdot 1.9672 - 10000 = 39344 - 10000 = 29344$ kr
+    \item Skillnad: $29344 - 19344 = 10000$ kr (= $h_1 \cdot (d-1)$)
+\end{itemize}
+
+Koden \textbf{övervärderar} alternativkostnaden!
+
+\subsubsection{Total alternativkostnad för hyra (enligt koden)}
+
+\begin{equation}
+    AK_{hyra} = FV_{hyra} - \text{Betald hyra} + [d \cdot h_1 \cdot (1 + r_s)^t - h_1]
+\end{equation}
+
+\textbf{Fullständig formel (standard case):}
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot (1 + r_s) \cdot r_s \cdot \frac{(1 + r_s)^t - (1 + \Delta H)^t}{r_s - \Delta H} - h_1 \cdot 12 \cdot \frac{1 - (1 + \Delta H)^t}{1 - (1 + \Delta H)} + d \cdot h_1 \cdot (1 + r_s)^t - h_1
+\end{equation}
+
+\section{Vinster för hyra (⚠ Diskussionspunkt)}
+
+\textbf{Kod (server.R, rad 1203):}
+\begin{verbatim}
+vinsterHyra <- -1*initialaHyra()
+\end{verbatim}
+
+där \texttt{initialaHyra() = minHyra() * depositionstid = $h_1 \cdot d$}
+
+Så:
+\begin{equation}
+    V_h = -h_1 \cdot d
+\end{equation}
+
+\textbf{Förklaring:} Detta representerar att depositionen återbetalas i slutet av hyresperioden.
+
+\textbf{Total kostnad för hyra:}
+\begin{align}
+    K_{tot,hyra} &= I_h + K_{löp,h} + AK_{hyra} + V_h \\
+    &= h_1 \cdot d + K_{hyra} + H_a \cdot 12 \cdot t + AK_{hyra} - h_1 \cdot d \\
+    &= K_{hyra} + H_a \cdot 12 \cdot t + AK_{hyra}
+\end{align}
+
+\textbf{Observation:} Depositionen $h_1 \cdot d$ och återbetalningen $-h_1 \cdot d$ tar ut varandra. MEN depositonens alternativkostnad ingår redan i $AK_{hyra}$, så detta är konsistent.
+
+\section{Motsvarande hyra - Slutformel}
+
+När vi sätter $K_{tot,köpa} = K_{tot,hyra}$:
+
+\begin{equation}
+    K_{tot,köpa} = K_{hyra} + H_a \cdot 12 \cdot t + AK_{hyra}
+\end{equation}
+
+Lös för $h_1$ genom att sätta in formlerna för $K_{hyra}$ och $AK_{hyra}$ (båda innehåller $h_1$).
+
+\textbf{Standard case (kod rad 1154):}
+\begin{equation}
+    h_1 = \frac{(K_{tot,köpa} - H_a \cdot 12 \cdot t) \cdot (r_s - \Delta H)}{(1 + r_s) \cdot [(1 + r_s)^t - (1 + \Delta H)^t] + (r_s - \Delta H) \cdot \frac{d}{12} \cdot (1 + r_s)^t - (r_s - \Delta H) \cdot \frac{d}{12}} \cdot \frac{1}{12}
+\end{equation}
+
+\textbf{Förklaring av nämnaren:}
+
+Term 1: $(1 + r_s) \cdot [(1 + r_s)^t - (1 + \Delta H)^t]$
+\begin{itemize}
+    \item Koefficient framför $h_1 \cdot 12$ i FV-formeln
+\end{itemize}
+
+Term 2: $(r_s - \Delta H) \cdot \frac{d}{12} \cdot (1 + r_s)^t$
+\begin{itemize}
+    \item Från depositonens FV
+    \item Faktorn $\frac{d}{12}$ konverterar från månader till år för konsistens
+\end{itemize}
+
+Term 3: $- (r_s - \Delta H) \cdot \frac{d}{12}$
+\begin{itemize}
+    \item Korrigering för depositionens ursprungliga värde
+\end{itemize}
+
+\section{Sammanfattning av identifierade problem}
+
+\begin{enumerate}
+    \item \textbf{Depositions alternativkostnad:} Koden subtraherar $h_1$ i stället för $d \cdot h_1$, vilket övervärderar alternativkostnaden med $(d-1) \cdot h_1$ kronor. Detta påverkar motsvarande hyra.
+
+    \textbf{Rekommendation:} Ändra rad 1188, 1192, 1197 från:
+    \begin{verbatim}
+    depositionstid*minHyra()*(1+avkastning)^tid - minHyra()
+    \end{verbatim}
+    till:
+    \begin{verbatim}
+    depositionstid*minHyra()*((1+avkastning)^tid - 1)
+    \end{verbatim}
+
+    eller ekvivalent:
+    \begin{verbatim}
+    depositionstid*minHyra()*(1+avkastning)^tid - depositionstid*minHyra()
+    \end{verbatim}
+
+    \item \textbf{Vinster för hyra:} Den ursprungliga logiken med $V_h = -I_h$ var förvirrande men matematiskt konsistent eftersom depositionen både läggs till och dras av. Alternativkostnaden hanteras separat.
+\end{enumerate}
+
+\section{Korrekt formel för alternativkostnad hyra}
+
+\subsection{Standard case ($r_s \neq \Delta H$, $\Delta H \neq 0$):}
+
+\begin{align}
+    AK_{hyra} &= h_1 \cdot 12 \cdot (1 + r_s) \cdot r_s \cdot \frac{(1 + r_s)^t - (1 + \Delta H)^t}{r_s - \Delta H} \\
+    &\quad - h_1 \cdot 12 \cdot \frac{1 - (1 + \Delta H)^t}{1 - (1 + \Delta H)} \\
+    &\quad + d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{align}
+
+\subsection{När $r_s \approx \Delta H$:}
+
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot t \cdot r_s + d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}
+
+\subsection{När $\Delta H = 0$:}
+
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot (1 + r_s) \cdot r_s \cdot \frac{(1 + r_s)^t - 1}{r_s} - h_1 \cdot 12 \cdot t + d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}
+
+Vilket förenklas till:
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot \left[(1 + r_s) \cdot ((1 + r_s)^t - 1) - t\right] + d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}

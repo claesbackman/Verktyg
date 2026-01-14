@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkylator - Köpa eller Hyra?</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🏠 Köp eller Hyr</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Hem</a></li>
+                <li><a href="calculator.html" class="active">Kalkylator</a></li>
+                <li><a href="documentation.html">Dokumentation</a></li>
+                <li><a href="about.html">Om verktyget</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section>
+            <h2>Köp eller Hyra Kalkylator</h2>
+            <p class="lead">
+                Använd kalkylatorn nedan för att beräkna din motsvarande hyra. Justera parametrarna och se hur olika faktorer påverkar ditt beslut.
+            </p>
+
+            <iframe
+                src="https://claesbackman.shinyapps.io/Verktyg/"
+                class="calculator-embed"
+                title="Köp eller Hyra Kalkylator"
+            ></iframe>
+
+            <div class="content-section" style="margin-top: 3rem;">
+                <h3>Tips för att använda kalkylatorn</h3>
+                <ul>
+                    <li><strong>Bostadspris:</strong> Ange det totala priset för bostaden du överväger att köpa</li>
+                    <li><strong>Kontantinsats:</strong> Hur stor del du betalar kontant (min 15% för bostadsrätt, 15% för villa)</li>
+                    <li><strong>Bolåneränta:</strong> Den aktuella räntan på ditt bolån (nuvarande marknadsränta)</li>
+                    <li><strong>Tid:</strong> Hur länge du planerar att bo i bostaden</li>
+                    <li><strong>Utforska graferna:</strong> Använd de 10 interaktiva graferna för att se hur olika faktorer påverkar din motsvarande hyra</li>
+                </ul>
+
+                <h3>Tolka resultatet</h3>
+                <p>
+                    Kalkylatorn visar "motsvarande hyra" - den månadshyra som skulle ge samma totalkostnad som att köpa.
+                </p>
+                <ul>
+                    <li>Om du kan hitta en liknande bostad att hyra för <strong>mindre</strong> än motsvarande hyra → <strong>Hyra är bättre</strong></li>
+                    <li>Om liknande bostäder kostar <strong>mer</strong> i hyra än motsvarande hyra → <strong>Köp är bättre</strong></li>
+                    <li>Kom ihåg att beakta icke-finansiella faktorer som flexibilitet, livsstil och framtidsplaner</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Köp eller Hyr</h4>
+                <p>En finansiell kalkylator för bostadsbeslut</p>
+            </div>
+            <div class="footer-section">
+                <h4>Länkar</h4>
+                <ul>
+                    <li><a href="calculator.html">Kalkylator</a></li>
+                    <li><a href="documentation.html">Dokumentation</a></li>
+                    <li><a href="about.html">Om verktyget</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Utvecklare</h4>
+                <p>Designad av <a href="https://sites.google.com/view/claesbackman/home" target="_blank">Claes Bäckman</a></p>
+                <p><a href="https://github.com/claesbackman/Verktyg" target="_blank">GitHub</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Köp eller Hyr. Använd på egen risk.</p>
+        </div>
+    </footer>
+</body>
+</html>

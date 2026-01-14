@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentation - Köpa eller Hyra?</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🏠 Köp eller Hyr</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Hem</a></li>
+                <li><a href="calculator.html">Kalkylator</a></li>
+                <li><a href="documentation.html" class="active">Dokumentation</a></li>
+                <li><a href="about.html">Om verktyget</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Teknisk dokumentation</h2>
+        <p class="lead">
+            Här förklaras de matematiska formlerna och beräkningarna som används i kalkylatorn.
+        </p>
+
+        <div class="content-section">
+            <h3>Översikt</h3>
+            <p>
+                Kalkylatorn beräknar den <strong>totala kostnaden för att köpa</strong> en bostad och hittar sedan den
+                <strong>motsvarande månadshyra</strong> som skulle ge samma totalkostnad. Detta gör det möjligt att
+                jämföra äpplen med äpplen när du överväger att köpa eller hyra.
+            </p>
+        </div>
+
+        <div class="content-section">
+            <h3>Totala kostnaden för att köpa</h3>
+            <p>Den totala kostnaden för att köpa består av fyra komponenter:</p>
+            <div class="formula-box">
+                \[ K_{tot,köpa} = K_{init} + K_{löp} + AK_{köpa} - V_{köpa} \]
+            </div>
+
+            <h4>1. Initiala kostnader (K<sub>init</sub>)</h4>
+            <p>De kostnader du har från start:</p>
+            <div class="formula-box">
+                \[ K_{init} = P \times k_i + F \]
+            </div>
+            <p>där:</p>
+            <ul>
+                <li><strong>P</strong> = Bostadspris</li>
+                <li><strong>k<sub>i</sub></strong> = Kontantinsats (i procent, t.ex. 0.15 för 15%)</li>
+                <li><strong>F</strong> = Flyttkostnader och besiktningar</li>
+            </ul>
+
+            <h4>2. Löpande kostnader (K<sub>löp</sub>)</h4>
+            <p>De återkommande kostnaderna under hela perioden:</p>
+            <div class="formula-box">
+                \[ K_{löp} = R + N + (A + Fs + K_a) \times 12 \times t \]
+            </div>
+            <p>där:</p>
+            <ul>
+                <li><strong>R</strong> = Totala räntekostnader (beräknas separat med skatteavdrag)</li>
+                <li><strong>N</strong> = Renoveringskostnader (procent av pris per år × t)</li>
+                <li><strong>A</strong> = Månadsavgift till förening</li>
+                <li><strong>Fs</strong> = Försäkring per månad</li>
+                <li><strong>K<sub>a</sub></strong> = Andra månadskostnader</li>
+                <li><strong>t</strong> = Tid i år</li>
+            </ul>
+
+            <h4>Räntekostnad med skatteavdrag</h4>
+            <p>Svensk lagstiftning ger 30% skattereduktion på 70% av räntekostnaden:</p>
+            <div class="formula-box">
+                \[ r_{eff} = r \times 0.7 \]
+                \[ R = r_{eff} \times \left( S \times t - S \times \frac{a \times (t-1) \times t}{2} \right) \]
+            </div>
+            <p>där:</p>
+            <ul>
+                <li><strong>r</strong> = Nominell bolåneränta</li>
+                <li><strong>r<sub>eff</sub></strong> = Effektiv ränta efter skatt</li>
+                <li><strong>S</strong> = Skuld = P × (1 - k<sub>i</sub>)</li>
+                <li><strong>a</strong> = Amortering (i procent av skuld per år)</li>
+            </ul>
+
+            <h4>3. Alternativkostnader (AK<sub>köpa</sub>)</h4>
+            <p>Avkastning du går miste om genom att inte investera pengarna:</p>
+            <div class="formula-box">
+                \[ AK_{köpa} = (P \times k_i + F) \times [(1 + r_s)^t - 1] + B \times \frac{(1+r_s)^t - 1}{r_s} - B \times t \]
+            </div>
+            <p>där:</p>
+            <ul>
+                <li><strong>r<sub>s</sub></strong> = Förväntad avkastning på investeringar</li>
+                <li><strong>B</strong> = Årliga betalningar (amortering + avgifter + renovering)</li>
+            </ul>
+
+            <h4>4. Kapitalvinster (V<sub>köpa</sub>)</h4>
+            <p>Vinst från husprisökning, efter skatt:</p>
+            <div class="formula-box">
+                \[ V_{köpa} = (P_{slut} - P) - (P_{slut} - P - N) \times \frac{22}{30} \times 0.3 + P \times k_i \]
+            </div>
+            <p>där:</p>
+            <ul>
+                <li><strong>P<sub>slut</sub></strong> = P × (1 + g<sub>p</sub>)<sup>t</sup> (slutligt husvärde)</li>
+                <li><strong>g<sub>p</sub></strong> = Årlig husprisökning</li>
+                <li>22/30 av vinsten är skattepliktig</li>
+                <li>30% skatt på den skattepliktiga delen</li>
+                <li>Renoveringar minskar skattepliktig vinst</li>
+                <li>Kontantinsats återfås skattefritt</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h3>Motsvarande hyra</h3>
+            <p>
+                Kalkylatorn beräknar vilken månadshyra (h₁) som skulle ge samma totalkostnad som att köpa.
+                Detta kräver att vi löser för h₁ i ekvationen:
+            </p>
+            <div class="formula-box">
+                \[ K_{tot,köpa} = K_{tot,hyra} \]
+            </div>
+
+            <h4>Totala kostnaden för hyra</h4>
+            <div class="formula-box">
+                \[ K_{tot,hyra} = K_{init,h} + K_{löp,h} + AK_{hyra} - V_{hyra} \]
+            </div>
+
+            <h4>Komponenter för hyra:</h4>
+            <p><strong>Initiala kostnader:</strong></p>
+            <div class="formula-box">
+                \[ K_{init,h} = h_1 \times d \]
+            </div>
+            <p>där d = deposition i månader</p>
+
+            <p><strong>Löpande kostnader:</strong></p>
+            <div class="formula-box">
+                \[ K_{löp,h} = h_1 \times 12 \times \frac{(1 + g_h)^t - 1}{g_h} + H_a \times 12 \times t \]
+            </div>
+            <p>där:</p>
+            <ul>
+                <li><strong>g<sub>h</sub></strong> = Årlig hyresökning</li>
+                <li><strong>H<sub>a</sub></strong> = Andra hyreskostnader per månad</li>
+            </ul>
+
+            <p><strong>Alternativkostnader för hyra:</strong></p>
+            <div class="formula-box">
+                \[ AK_{hyra} = h_1 \times 12 \times (1 + r_s) \times \frac{(1 + r_s)^t - (1 + g_h)^t}{r_s - g_h} - h_1 \times 12 \times \frac{(1 + g_h)^t - 1}{g_h} + d \times h_1 \times [(1 + r_s)^t - 1] \]
+            </div>
+
+            <p><strong>Vinster:</strong></p>
+            <div class="formula-box">
+                \[ V_{hyra} = 0 \]
+            </div>
+            <p>(Depositionen återfås och är redan hanterad i alternativkostnaderna)</p>
+
+            <h4>Lösning för motsvarande hyra</h4>
+            <p>När r<sub>s</sub> ≠ g<sub>h</sub>:</p>
+            <div class="formula-box">
+                \[ h_1 = \frac{(K_{tot,köpa} - H_a \times 12 \times t) \times (r_s - g_h)}{12 \times (1+r_s) \times [(1+r_s)^t - (1+g_h)^t] + d \times [(1+r_s)^t - 1] \times (r_s - g_h)} \]
+            </div>
+
+            <p>När r<sub>s</sub> ≈ g<sub>h</sub> (använder L'Hôpital's regel):</p>
+            <div class="formula-box">
+                \[ h_1 = \frac{K_{tot,köpa} - H_a \times 12 \times t}{12 \times t} \]
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h3>Specialfall och korrigeringar</h3>
+
+            <h4>Fall 1: Standard (r<sub>s</sub> ≠ g<sub>h</sub>)</h4>
+            <p>
+                Detta är det vanligaste fallet där investeringsavkastning och hyresökning skiljer sig åt.
+                Formeln använder växande annuitetsberäkningar.
+            </p>
+
+            <h4>Fall 2: Lika tillväxttakt (r<sub>s</sub> ≈ g<sub>h</sub>)</h4>
+            <p>
+                När avkastning och hyresökning är lika uppstår division med noll. Vi använder L'Hôpital's regel
+                för att beräkna gränsvärdet, vilket ger en förenklad formel.
+            </p>
+
+            <h4>Fall 3: Ingen hyresökning (g<sub>h</sub> = 0)</h4>
+            <p>
+                När hyran är konstant blir det en standardannuitet med lika betalningar varje år.
+            </p>
+
+            <h4>Viktiga korrigeringar</h4>
+            <p><strong>Depositionens alternativkostnad:</strong></p>
+            <p>Korrigerad formel:</p>
+            <div class="formula-box">
+                \[ AK_{dep} = d \times h_1 \times [(1 + r_s)^t - 1] \]
+            </div>
+            <p>
+                Tidigare version hade ett fel som överskattade alternativkostnaden med (d-1) × h₁ kronor.
+            </p>
+        </div>
+
+        <div class="content-section">
+            <h3>Parametrar och standardvärden</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: var(--bg-light);">
+                        <th style="padding: 1rem; text-align: left; border: 1px solid #ddd;">Parameter</th>
+                        <th style="padding: 1rem; text-align: left; border: 1px solid #ddd;">Standardvärde</th>
+                        <th style="padding: 1rem; text-align: left; border: 1px solid #ddd;">Beskrivning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Bostadspris</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">1 000 000 kr</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Totalt pris för bostaden</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Kontantinsats</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">15%</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Minsta krav för bostadsrätt</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Bolåneränta</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">3%</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Nominell ränta före skatt</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Amortering</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">2%</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Procent av skuld per år</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Tid</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">10 år</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Tidshorisont</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Husprisökning</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">3%</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Årlig prisökning</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Hyresökning</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">2%</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Årlig hyreshöjning</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Investeringsavkastning</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">7%</td>
+                        <td style="padding: 1rem; border: 1px solid #ddd;">Förväntad årlig avkastning</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="content-section">
+            <h3>Antaganden och begränsningar</h3>
+            <ul>
+                <li><strong>Skatteregler:</strong> Använder svenska regler för ränteavdrag och kapitalvinstskatt</li>
+                <li><strong>Ränteavdrag:</strong> 30% reduktion på 70% av räntan (effektivt 21% av räntan)</li>
+                <li><strong>Kapitalvinstskatt:</strong> 22/30 av vinsten beskattas med 30% (effektivt 22% skatt)</li>
+                <li><strong>Konstanta räntor:</strong> Antar att bolåneränta och investeringsavkastning är konstanta</li>
+                <li><strong>Linjär amortering:</strong> Amorterar samma procentandel av ursprunglig skuld varje år</li>
+                <li><strong>Ingen inflation:</strong> Alla belopp i dagens penningvärde</li>
+                <li><strong>Inga transaktionskostnader:</strong> Bortser från mäklararvoden och andra avgifter vid försäljning</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h3>Referenser</h3>
+            <ul>
+                <li><a href="https://www.skatteverket.se/privat/skatter/vardepapper/forsaljningavbostad.4.18e1b10334ebe8bc8000117.html" target="_blank">Skatteverket - Försäljning av bostad</a></li>
+                <li><a href="https://www.skatteverket.se/privat/skatter/beloppochprocent/skattereduktioner.4.2b543913a42158acf800021248.html" target="_blank">Skatteverket - Ränteavdrag</a></li>
+                <li><a href="https://www.fi.se/sv/vara-register/amorteringskrav/" target="_blank">Finansinspektionen - Amorteringskrav</a></li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Köp eller Hyr</h4>
+                <p>En finansiell kalkylator för bostadsbeslut</p>
+            </div>
+            <div class="footer-section">
+                <h4>Länkar</h4>
+                <ul>
+                    <li><a href="calculator.html">Kalkylator</a></li>
+                    <li><a href="documentation.html">Dokumentation</a></li>
+                    <li><a href="about.html">Om verktyget</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Utvecklare</h4>
+                <p>Designad av <a href="https://sites.google.com/view/claesbackman/home" target="_blank">Claes Bäckman</a></p>
+                <p><a href="https://github.com/claesbackman/Verktyg" target="_blank">GitHub</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Köp eller Hyr. Använd på egen risk.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -87,18 +87,7 @@ tags$style(HTML("
     br(),  
     fluidRow(column(2,
             sliderInput("boxInc", "Bruttoinkomst", value = 200000, min=0, max=2000000, step=1000, ticks=FALSE, width="95%", post  = " kr"),
-            conditionalPanel(
-              condition = "input.boxKI <30",
-              sliderInput("BoxAmort", "Amortering", value = 2, min=2, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %")
-            ),
-            conditionalPanel(
-              condition = "input.boxKI <50 & input.boxKI>=30 ",
-              sliderInput("BoxAmort", "Amortering", value = 1, min=1, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %")
-            ),
-            conditionalPanel(
-              condition = "input.boxKI >=50",
-              sliderInput("BoxAmort", "Amortering", value = 0, min=0, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %")
-            )
+            uiOutput("amortSlider")
     ),
     column(10,
          plotOutput("grafAmort", height="200px", width= "100%")

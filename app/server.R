@@ -5,23 +5,69 @@ formatnummer <- function(x) {
 
 shinyServer(function(input, output) {
 
-    ################################
-    # Reactive defaults for conditional inputs
-    ################################
-    # These inputs only exist when framtiden checkbox is checked
-    # Provide default values when they are NULL
+  ################################
+  # Reactive defaults for conditional inputs
+  ################################
+  # These inputs only exist when framtiden checkbox is checked
+  # Provide default values when they are NULL
+  
+  deltaPris_val <- reactive({
+    if (is.null(input$boxDeltaP)) 3 else input$boxDeltaP
+  })
+  
+  deltaHyra_val <- reactive({
+    if (is.null(input$boxDeltaRent)) 2 else input$boxDeltaRent
+  })
+  
+  deltaSM_val <- reactive({
+    if (is.null(input$boxDeltaSM)) 7 else input$boxDeltaSM
+  })
+  
+  # BoxAmort has conditional panels based on down payment (boxKI)
+  # Provide default values when switching between panels
+  BoxAmort_val <- reactive({
+    # If BoxAmort input exists and is not NULL, use it
+    if (!is.null(input$BoxAmort)) {
+      return(input$BoxAmort)
+    }
 
-    deltaPris_val <- reactive({
-      if (is.null(input$boxDeltaP)) 3 else input$boxDeltaP
-    })
+    # BoxAmort is NULL, provide default based on boxKI
+    ki <- input$boxKI
 
-    deltaHyra_val <- reactive({
-      if (is.null(input$boxDeltaRent)) 2 else input$boxDeltaRent
-    })
+    # If boxKI is also NULL (app just starting), return default for 15% down payment
+    if (is.null(ki)) {
+      return(2)  # Default matches boxKI default of 15% (which is < 30)
+    }
 
-    deltaSM_val <- reactive({
-      if (is.null(input$boxDeltaSM)) 7 else input$boxDeltaSM
-    })
+    # Return appropriate default based on actual boxKI value
+    if (ki < 30) {
+      return(2)
+    } else if (ki < 50) {
+      return(1)
+    } else {
+      return(0)
+    }
+  })
+
+  # Render amortization slider dynamically based on boxKI
+  output$amortSlider <- renderUI({
+    ki <- input$boxKI
+
+    # Set slider parameters based on down payment
+    if (is.null(ki) || ki < 30) {
+      # High LTV (>70%): min 2% amortization
+      sliderInput("BoxAmort", "Amortering", value = 2, min = 2, max = 15,
+                  step = 0.5, ticks = FALSE, width = "95%", post = " %")
+    } else if (ki < 50) {
+      # Medium LTV (50-70%): min 1% amortization
+      sliderInput("BoxAmort", "Amortering", value = 1, min = 1, max = 15,
+                  step = 0.5, ticks = FALSE, width = "95%", post = " %")
+    } else {
+      # Low LTV (<50%): no minimum amortization
+      sliderInput("BoxAmort", "Amortering", value = 0, min = 0, max = 15,
+                  step = 0.5, ticks = FALSE, width = "95%", post = " %")
+    }
+  })
 
     ################################
     # Att göra
@@ -114,7 +160,7 @@ shinyServer(function(input, output) {
     husprisvinst <- prisökning - (prisökning - renoveringar_2)*22/30*0.3 + ki*pris
     
     # Sammanlagt 
-    totala_kostnader <- intiala_köpa +totala_återkommande + alternativkostnad - husprisvinst #Funkar! 
+    totala_kostnader <- intiala_köpa + totala_återkommande + alternativkostnad - husprisvinst #Funkar! 
 
 
   # Motsvarande hyra (Equivalent monthly rent)
@@ -130,9 +176,9 @@ shinyServer(function(input, output) {
     round((totala_kostnader - totandrahyra) / (tid * 12), digits=0)
   } else {
     # Standard formula when rates differ
-    # This is a present value calculation for a growing annuity
+    # Denominator includes: rent FV terms + deposit opportunity cost
     round((totala_kostnader- totandrahyra)*(r_stocks - hyresökning)/
-        ((1+r_stocks)*((1+r_stocks)^tid-(1+hyresökning)^tid)+(r_stocks-hyresökning)*deposition/12*(1+r_stocks)^tid-(r_stocks-hyresökning)*deposition/12)/12
+        (12*(1+r_stocks)*((1+r_stocks)^tid-(1+hyresökning)^tid) + deposition*((1+r_stocks)^tid - 1)*(r_stocks - hyresökning))
     ,digits=0)
   }
 
@@ -153,7 +199,7 @@ shinyServer(function(input, output) {
      balPris <- hyraFunction(
         pris=i, 
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=  input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -179,7 +225,7 @@ shinyServer(function(input, output) {
     punktPris  <- hyraFunction(
       pris=input$boxPris,
       tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-      amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+      amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
       rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
       forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
       flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -235,7 +281,7 @@ shinyServer(function(input, output) {
         balTid <- hyraFunction(
           pris=input$boxPris,
           tid= i, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+          amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
           rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
           forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -257,7 +303,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -312,7 +358,7 @@ shinyServer(function(input, output) {
         balR <- hyraFunction(
           pris=input$boxPris,
           tid= input$boxTid, ranta=i, kontantinsats= input$boxKI, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+          amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
           rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
           forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -337,7 +383,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -391,8 +437,8 @@ shinyServer(function(input, output) {
     tableAmort <- reactive({
       
       # Sequence 
-      min <- input$BoxAmort - 2
-      max <- input$BoxAmort + 2
+      min <- BoxAmort_val() - 2
+      max <- BoxAmort_val() + 2
       seq <-  seq(from=min+0.1, to=max, by=0.1)
       
       # Start with empty vector and build from sequence
@@ -413,8 +459,8 @@ shinyServer(function(input, output) {
     
     # värdet för punkten
     output$grafAmort <- renderPlot({
-      min <- input$BoxAmort - 2
-      max <- input$BoxAmort + 2
+      min <- BoxAmort_val() - 2
+      max <- BoxAmort_val() + 2
       seq <-  seq(from=min+0.1, to=max, by=0.1)  # Match the table sequence
       # seq <-  seq(from=0, to=15, by=0.1)
       # All data 
@@ -426,12 +472,12 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
       )     
-      dataAmort <- dataAmort %>% mutate(ToHighlight = ifelse(xAmort == input$BoxAmort, "yes", "no"))
+      dataAmort <- dataAmort %>% mutate(ToHighlight = ifelse(xAmort == BoxAmort_val(), "yes", "no"))
       
       # print(dataAmort)  # Debug output
       
@@ -488,7 +534,7 @@ shinyServer(function(input, output) {
         balKI <- hyraFunction(
           pris=input$boxPris,
           tid= input$boxTid, ranta=input$boxR, kontantinsats= i, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+          amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
           rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
           forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -513,7 +559,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -573,7 +619,7 @@ shinyServer(function(input, output) {
         balDeltaP <- hyraFunction(
           pris=input$boxPris,
           tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=i,
+          amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=i,
           rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
           forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -598,7 +644,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -658,7 +704,7 @@ shinyServer(function(input, output) {
         balDeltaHyra <- hyraFunction(
           pris=input$boxPris,
           tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=i, deltaPris=deltaPris_val(),
+          amortering= BoxAmort_val(), deltaHyra=i, deltaPris=deltaPris_val(),
           rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
           forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -683,7 +729,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -742,7 +788,7 @@ shinyServer(function(input, output) {
         balDeltaSM  <- hyraFunction(
           pris=input$boxPris,
           tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+          amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
           rstocks=i, avgift= input$boxAvgift, renovering=input$boxReno ,
           forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -767,7 +813,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -822,7 +868,7 @@ shinyServer(function(input, output) {
         balKostnader  <- hyraFunction(
           pris=input$boxPris,
           tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+          amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
           rstocks=deltaSM_val(), avgift= i, renovering=input$boxReno ,
           forsakring= 0, andrakopa= 0, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -851,7 +897,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -905,7 +951,7 @@ shinyServer(function(input, output) {
         balReno <- hyraFunction(
           pris=input$boxPris,
           tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-          amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+          amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
           rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=i,
           forsakring=  input$boxFörsäkring, andrakopa=  input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
           flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -931,7 +977,7 @@ shinyServer(function(input, output) {
       punkt <- hyraFunction(
         pris=input$boxPris,
         tid= input$boxTid, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-        amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
+        amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val(),
         rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno,
         forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=input$boxAndraHyra,
         flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -988,7 +1034,7 @@ shinyServer(function(input, output) {
           tid2 <- tid-1
           pris <- input$boxPris
           ki <- input$boxKI / 100 
-          amortering <- input$BoxAmort / 100 
+          amortering <- BoxAmort_val() / 100 
           skuld <- pris*(1-ki)
           ränta <- input$boxR*0.7  / 100 # ränte gånger 1-skatteavdrag 
           df  <- skuld*ränta
@@ -1000,25 +1046,32 @@ shinyServer(function(input, output) {
         })
 
         ## Totala räntekostnader
-        räntaSum <- reactive({
-          skuld <- input$boxPris*(1-input$boxKI/100)
-          tid <- input$boxTid
-          amortering <- input$BoxAmort/ 100
-          ränta <- input$boxR * 0.7 / 100
-          skuldsättning_slut <- (1-input$boxKI/100) - tid*amortering 
-          if(input$boxKI == 100) {
-           round(0, digits=0)
+      räntaSum <- reactive({
+        skuld <- input$boxPris*(1-input$boxKI/100)
+        tid <- input$boxTid
+        amortering <- BoxAmort_val()/ 100
+        ränta <- input$boxR * 0.7 / 100
+        skuldsättning_slut <- (1-input$boxKI/100) - tid*amortering 
+        
+        if(input$boxKI == 100) {
+          round(0, digits=0)
+        }
+        else {
+          if(amortering == 0) {
+            # No amortization: interest on full loan amount for entire period
+            ränta * skuld * tid
           }
-          else {
-          if(skuldsättning_slut>0) {
+          else if(skuldsättning_slut > 0) {
+            # Loan not fully paid off: calculate interest with amortization
             ränta*(skuld*tid - skuld*(amortering*(tid-1)*tid/2))
           }
           else {
-            tid <- skuld/(amortering*skuld)
-            ränta*(skuld*tid - skuld*(amortering*(tid-1)*tid/2))
+            # Loan fully paid off before end of period
+            tid_alt <- skuld/(amortering*skuld)  # = 1/amortering
+            ränta*(skuld*tid_alt - skuld*(amortering*(tid_alt-1)*tid_alt/2))
           }
         }
-        })
+      })
 
 
         # Renoveringar - procent av ursprunliga priset gånger priset  gånger tid 
@@ -1029,10 +1082,10 @@ shinyServer(function(input, output) {
         # totala återkommande kostnader 
         formel_totala_återkommande <- reactive({
           tid <- input$boxTid
-          avgifter <- input$boxAvgift * 12
           försäkring <- input$boxFörsäkring * 12
+          avgifter <- input$boxAvgift * 12
           andra <- input$boxAndraKöpa * 12
-          räntaSum() + renoveringar() + (försäkring+andra+avgifter)*tid
+          räntaSum() + renoveringar() + (försäkring+avgifter+andra)*tid
         })
         
         ################################
@@ -1044,15 +1097,15 @@ shinyServer(function(input, output) {
         
         # compound interest formula with contributions 
         formel_alternativkostnad <- reactive({
-          kontantinsats_kr <- input$boxKI / 100  *input$boxPris
+          kontantinsats_kr <- input$boxKI / 100*input$boxPris
           skuld <- input$boxPris - kontantinsats_kr
           r_stocks <- deltaSM_val() / 100
           tid <- input$boxTid
-          betalningar <- input$BoxAmort * skuld / 100+
+          betalningar <- BoxAmort_val() * skuld / 100+
                       (input$boxAndraKöpa + input$boxFörsäkring + input$boxAvgift)*12+
                       input$boxReno*input$boxPris/100
            
-            (kontantinsats_kr+input$boxFlytt)*(1+r_stocks)^tid-kontantinsats_kr -input$boxFlytt+ (betalningar*(((1 + r_stocks)^(tid) - 1) / (r_stocks))) - betalningar*tid
+            (kontantinsats_kr+input$boxFlytt)*(1+r_stocks)^tid-kontantinsats_kr -input$boxFlytt + (betalningar*(((1 + r_stocks)^(tid) - 1) / (r_stocks))) - betalningar*tid
           })
         
         ################################
@@ -1090,14 +1143,15 @@ shinyServer(function(input, output) {
           hyresökning <- (deltaHyra_val()/100)
           tid <- input$boxTid
           deposition <- input$boxDeposition
-          AndraHyra <- input$boxAndraHyra * tid *12 
-          
+          AndraHyra <- input$boxAndraHyra * tid *12
+
           # Check for division by zero when investment return equals rent increase
           if (abs(r_stocks - hyresökning) < 0.0001) {
             # When rates are equal, use simplified formula (average cost per month)
             round((formel_totala_kostnader() - AndraHyra) / (tid * 12), digits=0)
           } else {
             # Standard formula when rates differ
+            # Denominator includes: rent FV terms + deposit opportunity cost
             (formel_totala_kostnader() - AndraHyra)*(r_stocks - hyresökning)/((1+r_stocks)*((1+r_stocks)^tid-(1+hyresökning)^tid)+(r_stocks-hyresökning)*deposition/12*(1+r_stocks)^tid-(r_stocks-hyresökning)*deposition/12)/12
           }
         })
@@ -1121,27 +1175,28 @@ shinyServer(function(input, output) {
           minHyra() * input$boxDeposition
         })
         
-        # Alternativkostnader för att hyra 
+        # Alternativkostnader för att hyra
         alternativHyra <- reactive({
           hyresökning <- deltaHyra_val()/100
           tid <- input$boxTid
           avkastning <- deltaSM_val() / 100
           hyra <- 12* minHyra()
           depositionstid <- input$boxDeposition
-          
+
           # Check for division by zero when rates are equal or when hyresökning == 0
           if (abs(avkastning - hyresökning) < 0.0001) {
             # When rates are equal, use simplified formula
-            hyra * tid * avkastning + depositionstid*minHyra()*(1+avkastning)^tid - minHyra()
+            hyra * tid * avkastning + depositionstid*minHyra()*((1+avkastning)^tid - 1)
           } else if (abs(hyresökning) < 0.0001) {
             # When rent increase is 0%, use simplified formula
-            (hyra * (1 + avkastning) * avkastning * ((1 + avkastning)^tid - 1)) / avkastning - hyra * tid + 
-              depositionstid*minHyra()*(1+avkastning)^tid - minHyra()
+            (hyra * (1 + avkastning) * avkastning * ((1 + avkastning)^tid - 1)) / avkastning - hyra * tid +
+              depositionstid*minHyra()*((1+avkastning)^tid - 1)
           } else {
             # Standard formula
-            (hyra * (1 + avkastning) * avkastning * ((1 + avkastning)^tid - (1 + hyresökning)^tid)) / 
-              (avkastning - hyresökning) - hyra * ((1-(1+hyresökning)^tid)/(1-(1+hyresökning))) + 
-              depositionstid*minHyra()*(1+avkastning)^tid - minHyra()
+            (hyra * (1 + avkastning) * ((1 + avkastning)^tid - (1 + hyresökning)^tid)) / 
+              (avkastning - hyresökning) - 
+              hyra * ((1-(1+hyresökning)^tid)/(1-(1+hyresökning))) + 
+              depositionstid*minHyra()*((1+avkastning)^tid - 1)
           }
         })
         
@@ -1174,7 +1229,7 @@ shinyServer(function(input, output) {
             hyraFunction(
               pris=input$boxPris,
               tid= 1, ranta=input$boxR, kontantinsats= input$boxKI, inkomst= input$boxInc,
-              amortering= input$BoxAmort, deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
+              amortering= BoxAmort_val(), deltaHyra=deltaHyra_val(), deltaPris=deltaPris_val() ,
               rstocks=deltaSM_val(), avgift= input$boxAvgift, renovering=input$boxReno ,
               forsakring= input$boxFörsäkring, andrakopa= input$boxAndraKöpa, andrahyra=  input$boxAndraHyra,
               flyttkostnader = input$boxFlytt, deposition = input$boxDeposition
@@ -1205,7 +1260,7 @@ shinyServer(function(input, output) {
       
       # Namn på matris
       rownames(tabledata) <- c("Initiala kostnader   ", "Löpande kostnader   ", "Alternativkostnader   ", 
-                               "Vinster   ","<b>Totala kostnader</b>   ")
+                               "Vinster   ","<b>Totala kostnader</b>" )
       colnames(tabledata) <- c("Köpa","Hyra")
       
       HTML(

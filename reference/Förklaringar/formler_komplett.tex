@@ -1,0 +1,554 @@
+\section{Alla beräkningar i kalkylatorn}
+
+Denna sektion dokumenterar samtliga formler som används i kalkylatorn för att jämföra kostnaden för att köpa kontra att hyra en bostad.
+
+\section{Parametrar och notation}
+
+\subsection{Grundläggande parametrar}
+\begin{itemize}
+    \item $P$ = Bostadspris (kr)
+    \item $t$ = Tidshorisont (år)
+    \item $r$ = Bolåneränta (procent per år)
+    \item $k_i$ = Kontantinsats (procent av pris)
+    \item $a$ = Amortering (procent av skuld per år)
+    \item $\Delta P$ = Årlig husprisökning (procent)
+    \item $\Delta H$ = Årlig hyresökning (procent)
+    \item $r_s$ = Avkastning på investeringar/aktier (procent)
+\end{itemize}
+
+\subsection{Löpande kostnader}
+\begin{itemize}
+    \item $A$ = Månadsavgift till förening (kr/månad)
+    \item $F$ = Försäkring (kr/månad)
+    \item $K_a$ = Andra månadskostnader för ägande (kr/månad)
+    \item $R$ = Renoveringar (procent av pris per år)
+    \item $K_f$ = Flyttkostnader (kr)
+\end{itemize}
+
+\subsection{Hyresparametrar}
+\begin{itemize}
+    \item $h_1$ = Initial månadshyra (kr/månad)
+    \item $H_a$ = Andra månadskostnader för hyra (kr/månad)
+    \item $d$ = Deposition (antal månadshyror)
+\end{itemize}
+
+\section{Kostnader för att köpa}
+
+\subsection{Initiala kostnader}
+
+De initiala kostnaderna består av kontantinsatsen och flyttkostnader:
+
+\begin{equation}
+    I_k = P \cdot \frac{k_i}{100} + K_f
+\end{equation}
+
+\textbf{Förklaring:} När du köper en bostad måste du betala en kontantinsats (minst 15\% i Sverige) plus engångskostnader som besiktning, flytthjälp, etc.
+
+\subsection{Skuld och amortering}
+
+Skulden efter kontantinsats:
+\begin{equation}
+    S = P \cdot \left(1 - \frac{k_i}{100}\right)
+\end{equation}
+
+Årlig amortering i kronor:
+\begin{equation}
+    A_{kr} = S \cdot \frac{a}{100}
+\end{equation}
+
+Skuldsättningsgrad efter $t$ år:
+\begin{equation}
+    s_{slut} = \left(1 - \frac{k_i}{100}\right) - t \cdot \frac{a}{100}
+\end{equation}
+
+\subsection{Räntekostnader}
+
+Räntekostnaden beräknas med svensk skattereduktion (30\% skatt på 70\% av räntan):
+
+\begin{equation}
+    r_{effektiv} = r \cdot 0.7 / 100
+\end{equation}
+
+\textbf{Fall 1: Skulden är inte helt amorterad efter $t$ år ($s_{slut} > 0$):}
+
+Totala räntekostnaden över $t$ år med linjär amortering:
+\begin{equation}
+    R_k = r_{effektiv} \cdot S \cdot \left(t - \frac{a}{100} \cdot \frac{(t-1) \cdot t}{2}\right)
+\end{equation}
+
+\textbf{Förklaring:} Formeln tar hänsyn till att skulden minskar linjärt över tid. Den första delen ($S \cdot t$) är total skuld om ingen amortering skedde. Den andra delen drar av den minskade skulden på grund av amortering. Faktorn $(t-1) \cdot t / 2$ är summan av en aritmetisk serie.
+
+\textbf{Fall 2: Skulden amorteras helt före $t$ år ($s_{slut} \leq 0$):}
+
+Beräkna tiden det tar att amortera helt:
+\begin{equation}
+    t_{amort} = \frac{S}{S \cdot \frac{a}{100}} = \frac{100}{a}
+\end{equation}
+
+Räntekostnad beräknas endast för denna kortare period:
+\begin{equation}
+    R_k = r_{effektiv} \cdot S \cdot \left(t_{amort} - \frac{a}{100} \cdot \frac{(t_{amort}-1) \cdot t_{amort}}{2}\right)
+\end{equation}
+
+\textbf{Fall 3: 100\% kontantinsats ($k_i = 100$):}
+\begin{equation}
+    R_k = 0
+\end{equation}
+
+\subsection{Renoveringskostnader}
+
+Totala renoveringskostnader över $t$ år:
+\begin{equation}
+    R_{ren} = P \cdot \frac{R}{100} \cdot t
+\end{equation}
+
+\textbf{Förklaring:} Renoveringar beräknas som en fast procent av det ursprungliga priset per år. Detta representerar löpande underhåll och förbättringar.
+
+\subsection{Totala återkommande kostnader}
+
+Summan av räntor, renoveringar och månadskostnader:
+\begin{equation}
+    K_{återk} = R_k + R_{ren} + (F + K_a + A) \cdot 12 \cdot t
+\end{equation}
+
+\subsection{Alternativkostnader}
+
+Alternativkostnaden representerar vad kapitalet hade kunnat växa till om det investerats i stället.
+
+\textbf{Del 1: Alternativkostnad för kontantinsats och flyttkostnad}
+
+Detta kapital hade kunnat investeras:
+\begin{equation}
+    AK_1 = (P \cdot \frac{k_i}{100} + K_f) \cdot (1 + \frac{r_s}{100})^t - P \cdot \frac{k_i}{100} - K_f
+\end{equation}
+
+\textbf{Förklaring:} Om du inte köpt bostaden hade kontantinsatsen kunnat investeras och växa med ränta-på-ränta. Formeln beräknar slutvärdet minus startkapitalet för att få vinsten.
+
+\textbf{Del 2: Alternativkostnad för löpande betalningar}
+
+De löpande betalningarna (amorteringar + kostnader) hade också kunnat investeras:
+
+Totala årliga betalningar:
+\begin{equation}
+    B_{tot} = S \cdot \frac{a}{100} + (K_a + F + A) \cdot 12 + P \cdot \frac{R}{100}
+\end{equation}
+
+Future value av en annuitet (årliga inbetalningar som växer med ränta):
+\begin{equation}
+    FV = B_{tot} \cdot \frac{(1 + \frac{r_s}{100})^t - 1}{\frac{r_s}{100}}
+\end{equation}
+
+Alternativkostnad för betalningar:
+\begin{equation}
+    AK_2 = FV - B_{tot} \cdot t
+\end{equation}
+
+\textbf{Förklaring:} Detta är en standardformel för framtida värde av en annuitet. Den beräknar vad dina årliga betalningar skulle ha vuxit till om de investerats i stället. Vi drar av summan av betalningarna ($B_{tot} \cdot t$) för att få endast avkastningen.
+
+\textbf{Total alternativkostnad:}
+\begin{equation}
+    AK = AK_1 + AK_2
+\end{equation}
+
+\subsection{Husprisvinster (kapitalvinster)}
+
+Total prisökning efter $t$ år:
+\begin{equation}
+    \Delta P_{tot} = P \cdot (1 + \frac{\Delta P}{100})^t - P
+\end{equation}
+
+\textbf{Svensk reavinstskatt:}
+
+I Sverige beskattas 22/30 av vinsten med 30\% skatt. Renoveringar ökar köpeskillingen och minskar därmed skattepliktig vinst:
+
+\begin{equation}
+    Skatt = (\Delta P_{tot} - R_{ren}) \cdot \frac{22}{30} \cdot 0.3
+\end{equation}
+
+Total vinst efter skatt (inklusive återbetald kontantinsats):
+\begin{equation}
+    V_k = \Delta P_{tot} - Skatt + P \cdot \frac{k_i}{100}
+\end{equation}
+
+\textbf{Förklaring:} När du säljer får du tillbaka prisökningen (minus skatt), plus din ursprungliga kontantinsats. Renoveringar minskar den skattepliktiga vinsten eftersom de ökar bostadens anskaffningsvärde.
+
+\subsection{Totala kostnader för att köpa}
+
+\begin{equation}
+    K_{tot,köpa} = I_k + K_{återk} + AK - V_k
+\end{equation}
+
+\textbf{Förklaring:} Total kostnad är allt du betalat ut (initialt + löpande + alternativkostnad) minus det du får tillbaka vid försäljning (vinster).
+
+\section{Kostnader för att hyra}
+
+\subsection{Initiala kostnader}
+
+Depositionen för hyreslägenhet:
+\begin{equation}
+    I_h = h_1 \cdot d
+\end{equation}
+
+\textbf{Förklaring:} Många hyresvärdar kräver 1-3 månadshyror i deposition.
+
+\subsection{Löpande hyreskostnader}
+
+Med årlig hyresökning blir den totala hyran över $t$ år en geometrisk serie:
+
+\begin{equation}
+    K_{hyra} =
+    \begin{cases}
+        h_1 \cdot 12 \cdot t & \text{om } \Delta H = 0 \\
+        h_1 \cdot 12 \cdot \frac{1 - (1 + \frac{\Delta H}{100})^t}{1 - (1 + \frac{\Delta H}{100})} & \text{om } \Delta H \neq 0
+    \end{cases}
+\end{equation}
+
+\textbf{Förklaring:} Om hyran ökar med $\Delta H$ procent per år blir år 1: $h_1 \cdot 12$, år 2: $h_1 \cdot 12 \cdot (1 + \Delta H/100)$, etc. Summan av denna geometriska serie ges av formeln ovan.
+
+Totala löpande kostnader inklusive andra kostnader:
+\begin{equation}
+    K_{löp,h} = K_{hyra} + H_a \cdot 12 \cdot t
+\end{equation}
+
+\subsection{Alternativkostnader för hyra}
+
+Alternativkostnaden för hyra representerar hur mycket mer pengar du skulle ha haft om du investerat hyresbetalningarna i stället för att betala hyra.
+
+\textbf{Struktur:}
+\begin{equation}
+    AK_{hyra} = FV_{hyresbetalningar} - \text{Betald hyra} + AK_{deposition}
+\end{equation}
+
+där:
+\begin{itemize}
+    \item $FV_{hyresbetalningar}$ = Framtida värde om hyresbetalningarna hade investerats
+    \item Betald hyra = Summan av alla hyresbetalningar
+    \item $AK_{deposition}$ = Alternativkostnad för depositionen
+\end{itemize}
+
+\subsubsection{Fall 1: Standard (när $r_s \neq \Delta H$ och $\Delta H \neq 0$)}
+
+\textbf{Framtida värde av växande hyresbetalningar:}
+
+Om hyran ökar med $\Delta H$ per år och investerats med avkastning $r_s$:
+\begin{equation}
+    FV_{hyra} = h_1 \cdot 12 \cdot (1 + r_s) \cdot \frac{(1 + r_s)^t - (1 + \Delta H)^t}{r_s - \Delta H}
+\end{equation}
+
+\textbf{Betald hyra (geometrisk serie):}
+\begin{equation}
+    \text{Betald} = h_1 \cdot 12 \cdot \frac{1 - (1 + \Delta H)^t}{1 - (1 + \Delta H)}
+\end{equation}
+
+\textbf{Depositionens alternativkostnad:}
+\begin{equation}
+    AK_{dep} = d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}
+
+\textbf{Total alternativkostnad:}
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot (1 + r_s) \cdot \frac{(1 + r_s)^t - (1 + \Delta H)^t}{r_s - \Delta H} - h_1 \cdot 12 \cdot \frac{1 - (1 + \Delta H)^t}{1 - (1 + \Delta H)} + d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}
+
+\textbf{Förklaring:} Första termen beräknar vad dina hyresbetalningar hade vuxit till om de investerats. Andra termen drar av vad du faktiskt betalat. Tredje termen lägger till alternativkostnaden för depositionen som inte kunnat investeras.
+
+\subsubsection{Fall 2: När avkastning = hyresökning ($r_s \approx \Delta H$)}
+
+När avkastningen på investeringar är lika med hyresökningen får vi division med noll i standardformeln. Vi måste använda L'Hôpital's regel för att hitta gränsvärdet.
+
+\textbf{Härledning med L'Hôpital:}
+
+Standardformelns första term när $\Delta H \to r_s$:
+\begin{equation}
+    \lim_{\Delta H \to r_s} \frac{(1 + r_s)^t - (1 + \Delta H)^t}{r_s - \Delta H}
+\end{equation}
+
+Använder L'Hôpital (derivera täljare och nämnare med avseende på $\Delta H$):
+\begin{equation}
+    = \frac{-t \cdot (1 + r_s)^{t-1}}{-1} = t \cdot (1 + r_s)^{t-1}
+\end{equation}
+
+\textbf{För den andra termen (betald hyra):}
+
+När $r_s = \Delta H = r$:
+\begin{equation}
+    h_1 \cdot 12 \cdot \frac{1 - (1 + r)^t}{1 - (1 + r)} = h_1 \cdot 12 \cdot \frac{(1 + r)^t - 1}{r}
+\end{equation}
+
+\textbf{Kombinera termerna:}
+
+FV minus betalt:
+\begin{align}
+    &= h_1 \cdot 12 \cdot (1 + r) \cdot t \cdot (1 + r)^{t-1} - h_1 \cdot 12 \cdot \frac{(1 + r)^t - 1}{r} \\
+    &= h_1 \cdot 12 \cdot \left[ (1 + r) \cdot t \cdot (1 + r)^{t-1} - \frac{(1 + r)^t - 1}{r} \right] \\
+    &= h_1 \cdot 12 \cdot \left[ t \cdot (1 + r)^t - \frac{(1 + r)^t - 1}{r} \right] \\
+    &= h_1 \cdot 12 \cdot \frac{t \cdot r \cdot (1 + r)^t - (1 + r)^t + 1}{r} \\
+    &= h_1 \cdot 12 \cdot \frac{(1 + r)^t \cdot (t \cdot r - 1) + 1}{r}
+\end{align}
+
+Detta kan förenklas till:
+\begin{equation}
+    = h_1 \cdot 12 \cdot \frac{(1 + r)^t - 1 - t \cdot r}{r}
+\end{equation}
+
+\textbf{Förenklad formel när $r_s = \Delta H$:}
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot \frac{(1 + r)^t - 1 - t \cdot r}{r} + d \cdot h_1 \cdot [(1 + r)^t - 1]
+\end{equation}
+
+\textbf{Förklaring:} När investeringsavkastningen och hyresökningen är lika växer varje års hyra i samma takt som den skulle ha vuxit om den investerats. Detta ger en förenklad formel som undviker division med noll.
+
+\subsubsection{Fall 3: När hyresökning = 0 ($\Delta H = 0$)}
+
+När hyran är konstant blir det en vanlig annuitet (lika betalningar varje år).
+
+\textbf{Framtida värde av konstant annuitet:}
+\begin{equation}
+    FV = h_1 \cdot 12 \cdot (1 + r_s) \cdot \frac{(1 + r_s)^t - 1}{r_s}
+\end{equation}
+
+\textbf{Betald hyra:}
+\begin{equation}
+    \text{Betald} = h_1 \cdot 12 \cdot t
+\end{equation}
+
+\textbf{Total alternativkostnad:}
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot (1 + r_s) \cdot \frac{(1 + r_s)^t - 1}{r_s} - h_1 \cdot 12 \cdot t + d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}
+
+Kan förenklas genom att multiplicera bråket:
+\begin{equation}
+    AK_{hyra} = h_1 \cdot 12 \cdot \left[ \frac{(1 + r_s) \cdot [(1 + r_s)^t - 1]}{r_s} - t \right] + d \cdot h_1 \cdot [(1 + r_s)^t - 1]
+\end{equation}
+
+\textbf{Förklaring:} Detta är standardformeln för framtida värde av en annuitet. Varje års lika betalning investeras och växer till slutet av perioden. Formeln blir enklare eftersom det inte finns någon växande serie att hantera.
+
+\subsection{Vinster vid hyra}
+
+När hyresperioden är slut får du tillbaka depositionen:
+\begin{equation}
+    V_h = -I_h = -h_1 \cdot d
+\end{equation}
+
+\textbf{OBS:} I den ursprungliga koden fanns ett fel där vinsten sattes till $-I_h$, vilket gjorde att depositionen försvann ur beräkningen. Detta har korrigerats till 0 eftersom depositionen redan hanteras i alternativkostnaden.
+
+\subsection{Totala kostnader för att hyra}
+
+\begin{equation}
+    K_{tot,hyra} = I_h + K_{löp,h} + AK_{hyra} + V_h
+\end{equation}
+
+\section{Beräkning av motsvarande hyra}
+
+Verktyget beräknar vilken månadshyra $h_1$ som gör att totalkostnaderna för hyra och köpa blir lika:
+
+\begin{equation}
+    K_{tot,köpa} = K_{tot,hyra}
+\end{equation}
+
+\subsection{Härledning}
+
+Sätter in formeln för hyra:
+\begin{align}
+    K_{tot,köpa} &= I_h + K_{löp,h} + AK_{hyra} + V_h \\
+    K_{tot,köpa} &= h_1 \cdot d + K_{hyra} + H_a \cdot 12 \cdot t + AK_{hyra} - h_1 \cdot d
+\end{align}
+
+Observera att $h_1 \cdot d$ och $-h_1 \cdot d$ tar ut varandra:
+\begin{equation}
+    K_{tot,köpa} = K_{hyra} + H_a \cdot 12 \cdot t + AK_{hyra}
+\end{equation}
+
+Dra bort andra hyreskostnader:
+\begin{equation}
+    K_{tot,köpa} - H_a \cdot 12 \cdot t = K_{hyra} + AK_{hyra}
+\end{equation}
+
+Sätt in formlerna för $K_{hyra}$ och $AK_{hyra}$ och lös för $h_1$.
+
+\subsection{Slutformel för motsvarande månadshyra}
+
+\textbf{Fall 1: När avkastning = hyresökning ($r_s \approx \Delta H$):}
+
+När tillväxttakterna är lika förenklas formeln till ett genomsnitt:
+\begin{equation}
+    h_1 = \frac{K_{tot,köpa} - H_a \cdot 12 \cdot t}{12 \cdot t}
+\end{equation}
+
+\textbf{Fall 2: När avkastning $\neq$ hyresökning:}
+
+Fullständig formel:
+\begin{equation}
+    h_1 = \frac{(K_{tot,köpa} - H_a \cdot 12 \cdot t) \cdot (\frac{r_s}{100} - \frac{\Delta H}{100})}{(1 + \frac{r_s}{100}) \cdot [(1 + \frac{r_s}{100})^t - (1 + \frac{\Delta H}{100})^t] + (\frac{r_s}{100} - \frac{\Delta H}{100}) \cdot \frac{d}{12} \cdot (1 + \frac{r_s}{100})^t - (\frac{r_s}{100} - \frac{\Delta H}{100}) \cdot \frac{d}{12}} \cdot \frac{1}{12}
+\end{equation}
+
+\textbf{Förklaring:} Denna formel löser för den initiala hyran $h_1$ som, när den växer med $\Delta H$ per år och alternativkostnaderna beaktas, ger samma totalkostnad som att köpa bostaden.
+
+Nämnaren innehåller:
+\begin{itemize}
+    \item $(1 + r_s) \cdot [(1 + r_s)^t - (1 + \Delta H)^t]$ - skillnaden mellan investeringstillväxt och hyrestillväxt
+    \item $\frac{d}{12} \cdot (1 + r_s)^t$ termen - depositonens alternativkostnad justerad för månadshyra
+\end{itemize}
+
+\section{Tolkning av resultatet}
+
+När kalkylatorn visar "motsvarande hyra" på $h_1$ kr/månad betyder det:
+
+\begin{itemize}
+    \item Om du hittar en liknande bostad att hyra för \textbf{mindre än} $h_1$ kr/månad: Det är bättre att hyra
+    \item Om hyran för en liknande bostad är \textbf{mer än} $h_1$ kr/månad: Det är bättre att köpa
+    \item Om hyran är \textbf{exakt} $h_1$ kr/månad: Kostnaderna är lika över tidsperioden
+\end{itemize}
+
+\section{Viktiga antaganden}
+
+\begin{enumerate}
+    \item \textbf{Linjär amortering:} Skulden minskar med samma belopp varje år
+    \item \textbf{Konstant ränta:} Bolåneräntan ändras inte över tiden
+    \item \textbf{Konstant avkastning:} Investeringsavkastningen är densamma varje år
+    \item \textbf{Geometrisk tillväxt:} Huspriser och hyror ökar med en konstant procentuell takt
+    \item \textbf{Svensk skattereduktion:} 30\% ränteavdrag på 70\% av räntan
+    \item \textbf{Svensk reavinstskatt:} 22/30 av vinsten beskattas med 30\%
+    \item \textbf{Ingen inflation:} Alla belopp är i dagens penningvärde
+    \item \textbf{Försäljning efter $t$ år:} Bostaden säljs exakt efter den planerade perioden
+\end{enumerate}
+
+\section{Känslighetsanalys}
+
+Verktyget innehåller grafer som visar hur motsvarande hyra förändras när olika parametrar varieras:
+
+\begin{enumerate}
+    \item \textbf{Bostadspris:} Högre pris $\rightarrow$ högre motsvarande hyra
+    \item \textbf{Tidshorisont:} Längre tid $\rightarrow$ lägre motsvarande hyra (fasta kostnader sprids ut)
+    \item \textbf{Bolåneränta:} Högre ränta $\rightarrow$ högre motsvarande hyra
+    \item \textbf{Kontantinsats:} Effekten beror på skillnaden mellan ränta och avkastning
+    \item \textbf{Amortering:} Högre amortering $\rightarrow$ lägre räntekostnader men högre alternativkostnad
+    \item \textbf{Husprisökning:} Högre prisökning $\rightarrow$ lägre motsvarande hyra (större vinst)
+    \item \textbf{Hyresökning:} Högre hyresökning $\rightarrow$ högre motsvarande hyra
+    \item \textbf{Avkastning på investeringar:} Högre avkastning $\rightarrow$ högre motsvarande hyra (större alternativkostnad)
+\end{enumerate}
+
+\section{Sammanfattning: Korrekta implementationsformler}
+
+Denna sektion sammanfattar de korrekta formlerna för implementering i koden.
+
+\subsection{Alternativkostnad för hyra - Tre fall}
+
+\subsubsection{Fall 1: Standard ($r_s \neq \Delta H$, $\Delta H \neq 0$)}
+
+\textbf{R-kod:}
+\begin{verbatim}
+alternativHyra <- (hyra * (1 + avkastning) *
+                   ((1 + avkastning)^tid - (1 + hyresökning)^tid)) /
+                  (avkastning - hyresökning) -
+                  hyra * ((1-(1+hyresökning)^tid)/(1-(1+hyresökning))) +
+                  depositionstid*minHyra()*((1+avkastning)^tid - 1)
+\end{verbatim}
+
+där:
+\begin{itemize}
+    \item \texttt{hyra} = $h_1 \cdot 12$ (årlig hyra)
+    \item \texttt{avkastning} = $r_s$ (som decimal, t.ex. 0.07 för 7\%)
+    \item \texttt{hyresökning} = $\Delta H$ (som decimal)
+    \item \texttt{depositionstid} = $d$ (antal månader)
+    \item \texttt{minHyra()} = $h_1$ (månadshyra)
+\end{itemize}
+
+\subsubsection{Fall 2: Lika tillväxttakt ($|r_s - \Delta H| < 0.0001$)}
+
+\textbf{R-kod:}
+\begin{verbatim}
+alternativHyra <- hyra * ((1 + avkastning)^tid - 1 -
+                          tid * avkastning) / avkastning +
+                  depositionstid*minHyra()*((1+avkastning)^tid - 1)
+\end{verbatim}
+
+\textbf{Alternativ förenklad form:}
+\begin{verbatim}
+alternativHyra <- hyra * (1 + avkastning) * tid *
+                  (1+avkastning)^(tid-1) -
+                  hyra * ((1+avkastning)^tid - 1) / avkastning +
+                  depositionstid*minHyra()*((1+avkastning)^tid - 1)
+\end{verbatim}
+
+\subsubsection{Fall 3: Ingen hyresökning ($|\Delta H| < 0.0001$)}
+
+\textbf{R-kod:}
+\begin{verbatim}
+alternativHyra <- (hyra * (1 + avkastning) *
+                   ((1 + avkastning)^tid - 1)) / avkastning -
+                  hyra * tid +
+                  depositionstid*minHyra()*((1+avkastning)^tid - 1)
+\end{verbatim}
+
+\subsection{Motsvarande hyra (minHyra)}
+
+\subsubsection{När $r_s \approx \Delta H$}
+
+\textbf{R-kod:}
+\begin{verbatim}
+minHyra <- (formel_totala_kostnader() - AndraHyra) / (tid * 12)
+\end{verbatim}
+
+\subsubsection{När $r_s \neq \Delta H$}
+
+\textbf{R-kod:}
+\begin{verbatim}
+minHyra <- (formel_totala_kostnader() - AndraHyra) *
+           (r_stocks - hyresökning) /
+           (12 * (1+r_stocks) * ((1+r_stocks)^tid - (1+hyresökning)^tid) +
+            deposition * ((1+r_stocks)^tid - 1) *
+            (r_stocks - hyresökning)) / 12
+\end{verbatim}
+
+där:
+\begin{itemize}
+    \item \texttt{AndraHyra} = $H_a \cdot 12 \cdot t$ (totala andra hyreskostnader)
+    \item \texttt{r\_stocks} = $r_s$ (som decimal)
+    \item \texttt{hyresökning} = $\Delta H$ (som decimal)
+    \item \texttt{deposition} = $d$ (antal månader)
+\end{itemize}
+
+\subsection{Viktiga korrigeringar från ursprunglig kod}
+
+\begin{enumerate}
+    \item \textbf{Depositionens alternativkostnad:} Ändrades från
+
+    \texttt{depositionstid*minHyra()*(1+avkastning)\^{}tid - minHyra()}
+
+    till
+
+    \texttt{depositionstid*minHyra()*((1+avkastning)\^{}tid - 1)}
+
+    Detta korrigerar övervärderingen av alternativkostnaden med $(d-1) \cdot h_1$ kronor.
+
+    \item \textbf{MinHyra denominatorn:} Ändrades från
+
+    \texttt{(r\_stocks-hyresökning)*deposition/12*(1+r\_stocks)\^{}tid - (r\_stocks-hyresökning)*deposition/12}
+
+    till
+
+    \texttt{deposition*((1+r\_stocks)\^{}tid - 1)*(r\_stocks - hyresökning)}
+
+    Detta säkerställer att motsvarande hyra verkligen ger lika totalkostnader för köpa och hyra.
+
+    \item \textbf{Fall 2 formel (lika tillväxttakt):} Den ursprungliga formeln \texttt{hyra * tid * avkastning} var för enkel och matematiskt felaktig. Den korrekta formeln använder antingen L'Hôpital's gränsvärde eller den förenklade formen ovan.
+\end{enumerate}
+
+\subsection{Verifiering}
+
+För att verifiera att formlerna är korrekta, kontrollera att:
+
+\begin{equation}
+    K_{tot,köpa} = K_{tot,hyra}
+\end{equation}
+
+där:
+\begin{align}
+    K_{tot,hyra} &= I_h + K_{löp,h} + AK_{hyra} + V_h \\
+    &= h_1 \cdot d + \text{sumHyra} + \text{alternativHyra} - h_1 \cdot d \\
+    &= \text{sumHyra} + \text{alternativHyra}
+\end{align}
+
+När \texttt{minHyra()} används i beräkningarna ska dessa två totaler vara lika (inom avrundningsfel).
