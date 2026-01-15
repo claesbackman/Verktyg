@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkylator - Köpa eller Hyra?</title>
+    <title>Låneutrymme - Köpa eller Hyra?</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,9 +12,9 @@
             <div class="logo">🏠 Köp eller Hyr</div>
             <ul class="nav-menu">
                 <li><a href="index.html">Hem</a></li>
-                <li><a href="calculator.html" class="active">Motsvarande Hyra</a></li>
+                <li><a href="calculator.html">Motsvarande Hyra</a></li>
                 <li><a href="wealth-comparison.html">Förmögenhetsjämförelse</a></li>
-                <li><a href="borrowing-capacity.html">Låneutrymme</a></li>
+                <li><a href="borrowing-capacity.html" class="active">Låneutrymme</a></li>
                 <li><a href="documentation.html">Dokumentation</a></li>
                 <li><a href="about.html">Om verktyget</a></li>
             </ul>
@@ -23,35 +23,36 @@
 
     <main class="container">
         <section>
-            <h2>Köp eller Hyra Kalkylator</h2>
+            <h2>Låneutrymme och kontantinsats</h2>
             <p class="lead">
-                Använd kalkylatorn nedan för att beräkna din motsvarande hyra. Justera parametrarna och se hur olika faktorer påverkar ditt beslut.
+                Se hur mycket du kan låna baserat på ditt månadstak, din ränta och din kontantinsats.
+                Jämför effekten av 15% vs 5% kontantinsatskrav.
             </p>
 
             <iframe
-                src="https://claesbackman.shinyapps.io/Verktyg/"
+                src="https://claesbackman.shinyapps.io/app_borrowing/"
                 class="calculator-embed"
-                title="Köp eller Hyra Kalkylator"
+                title="Låneutrymme Kalkylator"
             ></iframe>
 
             <div class="content-section" style="margin-top: 3rem;">
-                <h3>Tips för att använda kalkylatorn</h3>
+                <h3>Hur fungerar kalkylatorn?</h3>
+                <p>
+                    Verktyget räknar ut ditt maxlån utifrån en kombination av månadstak och kontantinsatskrav.
+                    Det gör det enkelt att jämföra hur mycket mer du kan låna om kravet på kontantinsats sänks.
+                </p>
+
+                <h4>Två begränsningar</h4>
                 <ul>
-                    <li><strong>Bostadspris:</strong> Ange det totala priset för bostaden du överväger att köpa</li>
-                    <li><strong>Kontantinsats:</strong> Hur stor del du betalar kontant (min 15% för bostadsrätt, 15% för villa)</li>
-                    <li><strong>Bolåneränta:</strong> Den aktuella räntan på ditt bolån (nuvarande marknadsränta)</li>
-                    <li><strong>Tid:</strong> Hur länge du planerar att bo i bostaden</li>
-                    <li><strong>Utforska graferna:</strong> Använd de 10 interaktiva graferna för att se hur olika faktorer påverkar din motsvarande hyra</li>
+                    <li><strong>Månadstak:</strong> Max månadskostnad för ränta och amortering</li>
+                    <li><strong>Kontantinsats:</strong> Max bostadspris enligt 15% eller 5% krav</li>
                 </ul>
 
-                <h3>Tolka resultatet</h3>
-                <p>
-                    Kalkylatorn visar "motsvarande hyra" - den månadshyra som skulle ge samma totalkostnad som att köpa.
-                </p>
+                <h4>Tips för tolkning</h4>
                 <ul>
-                    <li>Om du kan hitta en liknande bostad att hyra för <strong>mindre</strong> än motsvarande hyra → <strong>Hyra är bättre</strong></li>
-                    <li>Om liknande bostäder kostar <strong>mer</strong> i hyra än motsvarande hyra → <strong>Köp är bättre</strong></li>
-                    <li>Kom ihåg att beakta icke-finansiella faktorer som flexibilitet, livsstil och framtidsplaner</li>
+                    <li>Om månadstaket är lågt begränsar det låneutrymmet även vid 5% kontantinsats</li>
+                    <li>Om räntan stiger minskar maxlånet snabbt</li>
+                    <li>Högre amortering ger lägre maxlån men snabbare skuldfrihet</li>
                 </ul>
             </div>
         </section>
@@ -61,7 +62,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h4>Köp eller Hyr</h4>
-                <p>En finansiell kalkylator för bostadsbeslut</p>
+                <p>Finansiella kalkylatorer för bostadsbeslut</p>
             </div>
             <div class="footer-section">
                 <h4>Verktyg</h4>
