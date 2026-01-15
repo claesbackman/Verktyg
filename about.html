@@ -24,124 +24,9 @@
     <main class="container">
         <h2>Om verktyget</h2>
         <p class="lead">
-            Detta verktyg utvecklades för att hjälpa människor fatta välgrundade beslut om boende baserat på hård ekonomisk analys.
+            Detta verktyg utvecklades för att hjälpa människor fatta välgrundade beslut om boende.  Verktyget utvecklades av <strong>Claes Bäckman</strong>, som arbetar inom nationalekonomi och finans.  <a href="https://sites.google.com/view/claesbackman/home" target="_blank">Besök Claes hemsida →</a>
+
         </p>
-
-        <div class="content-section">
-            <h3>Varför skapades detta verktyg?</h3>
-            <p>
-                Frågan "Ska jag köpa eller hyra?" är en av de största finansiella beslut många människor fattar i sitt liv.
-                Svaret är inte alltid uppenbart eftersom det beror på många faktorer:
-            </p>
-            <ul>
-                <li>Bostadspriser och hyresnivåer</li>
-                <li>Bolåneräntor och skatteavdrag</li>
-                <li>Förväntad husprisökning</li>
-                <li>Alternativ avkastning på investeringar</li>
-                <li>Personliga mål och tidshorisont</li>
-            </ul>
-            <p>
-                Detta verktyg tar hänsyn till alla dessa faktorer och presenterar resultatet på ett tydligt sätt genom
-                konceptet "motsvarande hyra" - den hyra som skulle ge samma totalkostnad som att köpa.
-            </p>
-        </div>
-
-        <div class="content-section">
-            <h3>Vad gör verktyget unikt?</h3>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🇸🇪</div>
-                    <h4>Svenska skatteregler</h4>
-                    <p>Tar hänsyn till ränteavdrag (30% på 70% av räntan) och kapitalvinstskatt enligt svenska regler.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h4>10 interaktiva grafer</h4>
-                    <p>Utforska hur motsvarande hyra ändras när du justerar olika parametrar - från bostadspris till amorteringsnivå.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔬</div>
-                    <h4>Matematiskt rigorös</h4>
-                    <p>Använder korrekt finansmatematik med växande annuiteter och sammansatt ränta.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h4>Komplett analys</h4>
-                    <p>Inkluderar alla relevanta kostnader: ränta, avgifter, renovering, alternativkostnader och husprisvinster.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h3>Hur fungerar beräkningarna?</h3>
-            <p>
-                Kalkylatorn använder avancerad finansmatematik för att beräkna den totala kostnaden för att köpa en bostad,
-                inklusive:
-            </p>
-            <ol>
-                <li><strong>Initiala kostnader:</strong> Kontantinsats och flyttkostnader</li>
-                <li><strong>Löpande kostnader:</strong> Ränta (med skatteavdrag), avgifter, försäkring, renovering</li>
-                <li><strong>Alternativkostnader:</strong> Avkastning du går miste om genom att inte investera pengarna</li>
-                <li><strong>Kapitalvinster:</strong> Husprisökning minus kapitalvinstskatt</li>
-            </ol>
-            <p>
-                Därefter beräknas vilken månadshyra som skulle ge samma totalkostnad, med hänsyn tagen till att hyran
-                ökar över tid och att du kan investera skillnaden mellan köp- och hyreskostnader.
-            </p>
-            <p>
-                <a href="documentation.html">Läs den fullständiga tekniska dokumentationen →</a>
-            </p>
-        </div>
-
-        <div class="content-section">
-            <h3>Teknisk stack</h3>
-            <p>Verktyget är byggt med följande teknologier:</p>
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.5rem 0;">
-                <span style="background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold;">R</span>
-                <span style="background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold;">Shiny</span>
-                <span style="background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold;">ggplot2</span>
-                <span style="background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold;">tidyverse</span>
-                <span style="background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold;">HTML/CSS</span>
-            </div>
-            <p>
-                <strong>R Shiny</strong> gör det möjligt att skapa interaktiva webbapplikationer direkt från R-kod,
-                vilket är perfekt för finansiella kalkylatorer och datavisualisering.
-            </p>
-        </div>
-
-        <div class="content-section">
-            <h3>Köra verktyget lokalt</h3>
-            <p>Om du vill köra applikationen på din egen dator:</p>
-            <ol>
-                <li>Installera <a href="https://www.r-project.org/" target="_blank">R</a> och <a href="https://posit.co/download/rstudio-desktop/" target="_blank">RStudio</a></li>
-                <li>Klona GitHub-repositoriet:
-                    <div class="formula-box">git clone https://github.com/claesbackman/Verktyg.git</div>
-                </li>
-                <li>Öppna <code>app/ui.R</code> eller <code>app/server.R</code> i RStudio</li>
-                <li>Installera nödvändiga paket (RStudio föreslår detta automatiskt):
-                    <div class="formula-box">install.packages(c("shiny", "ggplot2", "dplyr", "scales", "shinythemes"))</div>
-                </li>
-                <li>Klicka på "Run App"-knappen i RStudio</li>
-            </ol>
-        </div>
-
-        <div class="content-section">
-            <h3>Källkod och bidrag</h3>
-            <p>
-                Projektet är öppen källkod och finns på GitHub. Du är välkommen att:
-            </p>
-            <ul>
-                <li>Granska och förbättra beräkningarna</li>
-                <li>Rapportera buggar eller föreslå förbättringar</li>
-                <li>Bidra med kod genom pull requests</li>
-                <li>Använda koden i egna projekt</li>
-            </ul>
-            <p>
-                <a href="https://github.com/claesbackman/Verktyg" target="_blank" class="cta-button" style="display: inline-block; margin-top: 1rem;">
-                    Se på GitHub →
-                </a>
-            </p>
-        </div>
 
         <div class="content-section">
             <h3>Varningar och ansvarsbegränsning</h3>
@@ -157,16 +42,7 @@
             </div>
         </div>
 
-        <div class="content-section">
-            <h3>Om utvecklaren</h3>
-            <p>
-                Detta verktyg utvecklades av <strong>Claes Bäckman</strong>, som kombinerar kunskap i ekonomi,
-                matematik och programmering för att skapa användbara verktyg för finansiellt beslutsfattande.
-            </p>
-            <p>
-                <a href="https://sites.google.com/view/claesbackman/home" target="_blank">Besök Claes hemsida →</a>
-            </p>
-        </div>
+        
 
         <div class="content-section">
             <h3>Kontakt och feedback</h3>
