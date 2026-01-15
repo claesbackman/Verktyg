@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Förmögenhetsjämförelse - Köpa eller Hyra?</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🏠 Köp eller Hyr</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Hem</a></li>
+                <li><a href="calculator.html">Motsvarande Hyra</a></li>
+                <li><a href="wealth-comparison.html" class="active">Förmögenhetsjämförelse</a></li>
+                <li><a href="documentation.html">Dokumentation</a></li>
+                <li><a href="about.html">Om verktyget</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section>
+            <h2>Förmögenhetsjämförelse: Köpa vs Hyra</h2>
+            <p class="lead">
+                Jämför hur din förmögenhet utvecklas över tid beroende på om du köper eller hyr din bostad.
+                Se exakt vilka faktorer som påverkar ditt resultat.
+            </p>
+
+            <iframe
+                src="https://claesbackman.shinyapps.io/app_amortization/"
+                class="calculator-embed"
+                title="Förmögenhetsjämförelse Kalkylator"
+            ></iframe>
+
+            <div class="content-section" style="margin-top: 3rem;">
+                <h3>Hur fungerar denna kalkylator?</h3>
+                <p>
+                    Till skillnad från "Motsvarande Hyra"-kalkylatorn som beräknar en ekvivalent hyra,
+                    visar denna kalkylator din faktiska förmögenhetsutveckling över tid för båda scenarierna.
+                </p>
+
+                <h4>Scenario 1: Köpa</h4>
+                <ul>
+                    <li><strong>Kontantinsats:</strong> Ditt startkapital i bostaden</li>
+                    <li><strong>Husprisvinst:</strong> Värdestegring minus reavinstskatt</li>
+                    <li><strong>Amortering:</strong> Eget kapital som byggs genom avbetalningar</li>
+                    <li><strong>Räntebesparing:</strong> Sparad ränta tack vare lägre skuld (investeras)</li>
+                    <li><strong>Alternativkostnad:</strong> Utebliven avkastning om kontantinsatsen investerats</li>
+                </ul>
+
+                <h4>Scenario 2: Hyra</h4>
+                <ul>
+                    <li><strong>Startkapital:</strong> Kontantinsats + flyttkostnader som investeras</li>
+                    <li><strong>Avkastning:</strong> Ränta-på-ränta på det investerade kapitalet</li>
+                    <li><strong>Sparande:</strong> Skillnaden mellan köp- och hyrkostnader (kan vara negativ)</li>
+                </ul>
+
+                <h3>Viktiga antaganden</h3>
+                <ul>
+                    <li>Ränteavdrag: 30% skattelättnad på 70% av räntan</li>
+                    <li>Reavinstskatt: 22/30 av vinsten beskattas med 30%</li>
+                    <li>Renovering minskar skattepliktig vinst</li>
+                    <li>Räntebesparingar från amortering investeras</li>
+                </ul>
+
+                <h3>Tips för tolkning</h3>
+                <ul>
+                    <li>Resultatet beror starkt på antaganden om husprisökning och investeringsavkastning</li>
+                    <li>Historiskt har aktier gett ca 7-8% avkastning i snitt, men med stor variation</li>
+                    <li>Huspriserna varierar mycket mellan år och regioner</li>
+                    <li>Tänk på att bostadsköp ger stabilitet och trygghet som inte syns i siffrorna</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Köp eller Hyr</h4>
+                <p>Finansiella kalkylatorer för bostadsbeslut</p>
+            </div>
+            <div class="footer-section">
+                <h4>Verktyg</h4>
+                <ul>
+                    <li><a href="calculator.html">Motsvarande Hyra</a></li>
+                    <li><a href="wealth-comparison.html">Förmögenhetsjämförelse</a></li>
+                    <li><a href="documentation.html">Dokumentation</a></li>
+                    <li><a href="about.html">Om verktyget</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Utvecklare</h4>
+                <p>Designad av <a href="https://sites.google.com/view/claesbackman/home" target="_blank">Claes Bäckman</a></p>
+                <p><a href="https://github.com/claesbackman/Verktyg" target="_blank">GitHub</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Köp eller Hyr. Använd på egen risk.</p>
+        </div>
+    </footer>
+</body>
+</html>

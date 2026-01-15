@@ -1,50 +1,54 @@
-# Amorteringsutforskare
+# Köpa vs Hyra: Förmögenhetsjämförelse
 
 ## Översikt
 
-Denna Shiny-app hjälper dig utforska hur amorteringsnivån påverkar både kostnaden för att köpa versus hyra och din slutliga förmögenhet.
+Denna Shiny-app jämför förmögenhetsutvecklingen mellan att köpa och hyra en bostad. Du anger dina specifika förutsättningar (bostadens pris, hyra, amortering, investeringsavkastning) och får se hur din förmögenhet utvecklas över tid i båda scenarierna.
 
 ## Syfte
 
-Applikationen fokuserar på att besvara två nyckelfrågor:
+Applikationen hjälper dig besvara frågan: **Ska jag köpa eller hyra?**
 
-1. **Hur påverkar amortering motsvarande hyra?**
-   - Visar vilken månadshyra som gör köp och hyra ekonomiskt likvärdiga
-   - Låter dig se hur denna hyra ändras över ett spann av amorteringsnivåer
-
-2. **Hur påverkar amortering din förmögenhet?**
-   - Jämför din totala förmögenhet efter vald period vid både köp och hyra
-   - Visar optimal amorteringsnivå för maximal förmögenhet
+Till skillnad från enkla kalkylatorer som bara jämför månadskostnader, tar denna hänsyn till:
+- Förmögenhetsuppbyggnad genom bostadsägande
+- Alternativkostnad (vad kontantinsatsen kunde gett i avkastning)
+- Investeringsmöjligheter av sparade pengar vid hyra
+- Svenska skatteregler (ränteavdrag och reavinstskatt)
 
 ## Funktioner
 
-### Flik 1: Amortering vs Hyra
-- Graf som visar motsvarande hyra för olika amorteringsnivåer
-- Identifierar vilken amorteringsnivå som ger lägst/högst motsvarande hyra
-- Visar skillnaden mellan min och max
+### Flik 1: Förmögenhetsutveckling
+- År-för-år graf som visar hur din förmögenhet utvecklas
+- Visar båda scenarierna (köpa och hyra) samtidigt
+- Identifierar eventuell brytpunkt där scenarierna blir likvärdiga
 
-### Flik 2: Amortering vs Förmögenhet
-- Jämför förmögenhet vid köp vs hyra över amorteringsspektrum
-- Två linjer: en för köp, en för hyra
-- Identifierar optimal amortering för varje scenario
+### Flik 2: Sammanfattning
+- Stapeldiagram med slutlig förmögenhet
+- Tabell med exakta siffror
+- Tydlig vinnare-indikation
+- Detaljerad kostnadsuppdelning för båda alternativen
 
-### Flik 3: Detaljerad jämförelse
-- Välj specifik amorteringsnivå
-- Se detaljerad kostnadsuppdelning för både köp och hyra
-- Jämför slutlig förmögenhet
+### Flik 3: Information
+- Förklaring av beräkningarna
+- Svenska skatteregler som används
+- Antaganden och begränsningar
+- Tips för tolkning av resultat
 
-### Flik 4: Information
-- Förklaringar av antaganden
-- Viktiga insikter om amortering
+## Beräkningslogik
 
-## Viktig insikt
+### Köpa
+Din förmögenhet vid köp består av:
+- **Husvärde** efter prisökning över tid
+- **Minus kvarvarande skuld** (lån minus amorteringar)
+- **Minus reavinstskatt** vid försäljning (22/30 × vinst × 30%)
 
-**Optimal amortering beror på skillnaden mellan bolåneränta (efter skatt) och investeringsavkastning:**
+### Hyra
+Din förmögenhet vid hyra består av:
+- **Kontantinsats + flyttkostnader** investerade från start
+- **Årliga besparingar** (skillnad mellan köp- och hyrkostnader) investerade
+- **Avkastning** på investeringarna
 
-- **Om investeringsavkastning > effektiv ränta:** Lägre amortering ger högre förmögenhet (investera i stället)
-- **Om investeringsavkastning < effektiv ränta:** Högre amortering ger lägre kostnader (amortera aggressivt)
-
-Med svensk skattereduktion (30% på 70% av räntan) blir effektiv ränta: `r × 0.7`
+Om köpkostnader > hyrkostnader: du sparar och investerar skillnaden
+Om köpkostnader < hyrkostnader: du måste ta från dina investeringar
 
 ## Användning
 
@@ -54,32 +58,48 @@ shiny::runApp("app_amortization")
 ```
 
 ### Justera parametrar
-1. **Amorteringsspann:** Sätt min, max och steg för amorteringsnivåer att utforska
-2. **Bostadsparametrar:** Pris, kontantinsats, ränta
-3. **Tillväxtparametrar:** Husprisökning, hyresökning, investeringsavkastning
-4. **Kostnader:** Avgifter, försäkring, renovering, etc.
 
-### Tolka resultat
-- **Motsvarande hyra:** Om du kan hyra för mindre än detta, är hyra bättre
-- **Förmögenhet:** Högre linje = bättre scenario för förmögenhetsbyggande
+**Bostad och lån:**
+- Bostadspris
+- Kontantinsats (%)
+- Bolåneränta
+- Amortering (% av skuld per år)
 
-## Tekniska detaljer
+**Hyra:**
+- Månadshyra
+- Andra hyreskostnader
 
-### Beräkningar
-- Använder samma `hyraFunction` som huvudappen
-- Beräknar förmögenhet som: (tillgångar efter försäljning) - (skuld) för köp
-- För hyra: investerat kapital från kontantinsats + sparade betalningar
+**Tidshorisont och tillväxt:**
+- Tid i bostaden (år)
+- Årlig husprisökning
+- Årlig hyresökning
 
-### Antaganden
-- Bolåneränta: 30% skattereduktion på 70% av räntan
-- Reavinstskatt: 22/30 av vinsten beskattas med 30%
-- Renovering minskar skattepliktig revinst
-- Alla belopp i dagens penningvärde
+**Investeringar:**
+- Investeringsavkastning (sätt till 0% om du inte investerar)
+
+**Kostnader vid köp:**
+- Månadsavgift (BRF)
+- Försäkring
+- Andra månadskostnader
+- Renovering
+- Flyttkostnader
+
+## Svenska skatteregler
+
+- **Ränteavdrag:** 30% skattelättnad på 70% av räntan
+- **Reavinstskatt:** 22/30 av vinsten beskattas med 30%
+- **Renovering:** Minskar skattepliktig vinst (ökar anskaffningsvärdet)
+
+## Tips för tolkning
+
+1. **Resultatet beror på antaganden** - Små ändringar i husprisökning eller avkastning ger stora skillnader
+2. **Historiska genomsnitt** - Aktier har gett ca 7-8% i snitt, men med stor variation
+3. **Lokala förhållanden** - Huspriser varierar mycket mellan regioner
+4. **Icke-finansiella faktorer** - Trygghet, flexibilitet och livsstil syns inte i siffrorna
 
 ## Filer
 
 - `ui.R` - Användargränssnitt
 - `server.R` - Server-logik och beräkningar
-- `hyraFunction.R` - Kärnberäkningsfunktion
 - `global.R` - Bibliotek och globala inställningar
 - `README.md` - Denna fil

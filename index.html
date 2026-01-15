@@ -12,7 +12,8 @@
             <div class="logo">🏠 Köp eller Hyr</div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="active">Hem</a></li>
-                <li><a href="calculator.html">Kalkylator</a></li>
+                <li><a href="calculator.html">Motsvarande Hyra</a></li>
+                <li><a href="wealth-comparison.html">Förmögenhetsjämförelse</a></li>
                 <li><a href="documentation.html">Dokumentation</a></li>
                 <li><a href="about.html">Om verktyget</a></li>
             </ul>
@@ -22,8 +23,11 @@
     <header class="hero">
         <div class="hero-content">
             <h1 class="hero-title">Ska du köpa eller hyra?</h1>
-            <p class="hero-subtitle">En omfattande finansiell kalkylator för att hjälpa dig fatta det rätta beslutet</p>
-            <a href="calculator.html" class="cta-button">Kom igång →</a>
+            <p class="hero-subtitle">Två kraftfulla verktyg för att hjälpa dig fatta det rätta beslutet</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="calculator.html" class="cta-button">Motsvarande Hyra</a>
+                <a href="wealth-comparison.html" class="cta-button" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white;">Förmögenhetsjämförelse</a>
+            </div>
         </div>
         <div class="hero-graphic">
             <div class="floating-card">
@@ -31,8 +35,8 @@
                 <p>Motsvarande hyra</p>
             </div>
             <div class="floating-card delay-1">
-                <h3>📊 Analysera</h3>
-                <p>Alla kostnader</p>
+                <h3>📊 Jämför</h3>
+                <p>Förmögenhet över tid</p>
             </div>
             <div class="floating-card delay-2">
                 <h3>✅ Besluta</h3>
@@ -43,30 +47,54 @@
 
     <main class="container">
         <section class="intro-section">
-            <h2>Varför denna kalkylator?</h2>
+            <h2>Två verktyg - Två perspektiv</h2>
             <p class="lead">
                 Det är inte enkelt att jämföra vad det kostar att köpa en bostad med vad det kostar att hyra.
-                Denna kalkylator tar hänsyn till alla viktiga kostnader och beräknar en <strong>motsvarande hyra</strong>
-                – den månadshyra som skulle ge samma totalkostnad som att köpa bostaden.
+                Vi erbjuder två kraftfulla verktyg som hjälper dig analysera frågan från olika vinklar.
             </p>
-            <div class="highlight-box">
-                <strong>📌 Enkel regel:</strong> Om du kan hitta en liknande bostad för lägre hyra än den beräknade
-                "motsvarande hyran", är det ekonomiskt mer fördelaktigt att hyra.
+        </section>
+
+        <section class="features-section">
+            <h2>Våra verktyg</h2>
+            <div class="features-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="feature-card" style="border-top: 4px solid var(--primary-color);">
+                    <div class="feature-icon">💰</div>
+                    <h3>Motsvarande Hyra</h3>
+                    <p>
+                        Beräknar vilken månadshyra som motsvarar kostnaden att köpa en bostad.
+                        Perfekt för att snabbt jämföra om köp eller hyra är mer ekonomiskt.
+                    </p>
+                    <ul style="text-align: left; margin: 1rem 0; color: var(--text-light);">
+                        <li>10 interaktiva grafer</li>
+                        <li>Känslighetsanalys</li>
+                        <li>Detaljerad kostnadsuppdelning</li>
+                    </ul>
+                    <a href="calculator.html" class="cta-button" style="padding: 0.8rem 1.5rem; font-size: 1rem;">Öppna verktyget</a>
+                </div>
+                <div class="feature-card" style="border-top: 4px solid var(--secondary-color);">
+                    <div class="feature-icon">📊</div>
+                    <h3>Förmögenhetsjämförelse</h3>
+                    <p>
+                        Jämför hur din förmögenhet utvecklas över tid beroende på om du köper eller hyr.
+                        Se exakt vilka faktorer som bygger din förmögenhet.
+                    </p>
+                    <ul style="text-align: left; margin: 1rem 0; color: var(--text-light);">
+                        <li>Förmögenhetsutveckling över tid</li>
+                        <li>Uppdelning av förmögenhetskomponenter</li>
+                        <li>Räntebesparing från amortering</li>
+                    </ul>
+                    <a href="wealth-comparison.html" class="cta-button" style="padding: 0.8rem 1.5rem; font-size: 1rem; background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));">Öppna verktyget</a>
+                </div>
             </div>
         </section>
 
         <section class="features-section">
-            <h2>Huvudfunktioner</h2>
+            <h2>Gemensamma funktioner</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>10 Interaktiva grafer</h3>
-                    <p>Visa hur motsvarande hyra ändras baserat på bostadspris, tid, ränta, amortering, kontantinsats och fler variabler.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💰</div>
-                    <h3>Komplett kostnadsanalys</h3>
-                    <p>Tar hänsyn till initiala kostnader, löpande kostnader, alternativkostnader och husprisvinster.</p>
+                    <div class="feature-icon">🇸🇪</div>
+                    <h3>Svenska skatteregler</h3>
+                    <p>Inkluderar ränteavdrag (30% på 70% av räntan) och kapitalvinstskatt (22/30 av vinst beskattas med 30%).</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📈</div>
@@ -74,13 +102,8 @@
                     <p>Anpassa förväntningar på husprisökning, hyresökning och avkastning på investeringar.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🇸🇪</div>
-                    <h3>Svenska skatteregler</h3>
-                    <p>Inkluderar ränteavdrag (30% på 70% av räntan) och kapitalvinstskatt (22/30 av vinst beskattas med 30%).</p>
-                </div>
-                <div class="feature-card">
                     <div class="feature-icon">🔄</div>
-                    <h3>Känslighetsanalys</h3>
+                    <h3>Interaktiva grafer</h3>
                     <p>Se direkt hur små förändringar i parametrar påverkar ditt beslut.</p>
                 </div>
                 <div class="feature-card">
@@ -114,8 +137,11 @@
 
         <section class="cta-section">
             <h2>Redo att börja?</h2>
-            <p>Använd kalkylatorn nu för att ta reda på om du ska köpa eller hyra din nästa bostad.</p>
-            <a href="calculator.html" class="cta-button">Öppna kalkylatorn →</a>
+            <p>Använd våra verktyg nu för att ta reda på om du ska köpa eller hyra din nästa bostad.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="calculator.html" class="cta-button">Motsvarande Hyra</a>
+                <a href="wealth-comparison.html" class="cta-button" style="background: transparent; border: 2px solid white;">Förmögenhetsjämförelse</a>
+            </div>
         </section>
     </main>
 
@@ -126,9 +152,10 @@
                 <p>En finansiell kalkylator för bostadsbeslut</p>
             </div>
             <div class="footer-section">
-                <h4>Länkar</h4>
+                <h4>Verktyg</h4>
                 <ul>
-                    <li><a href="calculator.html">Kalkylator</a></li>
+                    <li><a href="calculator.html">Motsvarande Hyra</a></li>
+                    <li><a href="wealth-comparison.html">Förmögenhetsjämförelse</a></li>
                     <li><a href="documentation.html">Dokumentation</a></li>
                     <li><a href="about.html">Om verktyget</a></li>
                 </ul>
