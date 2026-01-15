@@ -4,9 +4,9 @@ En omfattande finansiell kalkylator för att hjälpa dig bestämma om det är me
 
 ## 🚀 Snabbstart
 
-**Live Demo:** [Öppna kalkylatorn](https://YOUR-USERNAME.shinyapps.io/Verktyg/) *(uppdatera efter deployment)*
+**Live Demo:** [Öppna kalkylatorn](https://verktyg.claesbackman.com/index.html)
 
-**Dokumentation:** [GitHub Pages](https://claesbackman.github.io/Verktyg/)
+**Dokumentation:** [GitHub Pages](https://verktyg.claesbackman.com/documentation.html)
 
 ## 📁 Projektstruktur
 

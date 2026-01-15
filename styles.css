@@ -6,15 +6,15 @@
 }
 
 :root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --accent-color: #f093fb;
-    --text-dark: #2d3748;
-    --text-light: #718096;
-    --bg-light: #f7fafc;
+    --primary-color: #2E86AB;
+    --secondary-color: #1B5E7E;
+    --accent-color: #D4763A;
+    --text-dark: #1a1a2e;
+    --text-light: #6c757d;
+    --bg-light: #fafbfc;
     --white: #ffffff;
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.12);
 }
 
 body {
@@ -82,7 +82,7 @@ body {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 65%, var(--accent-color) 100%);
     color: var(--white);
     padding: 6rem 2rem;
     position: relative;
@@ -183,7 +183,12 @@ body {
 
 .cta-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 30px rgba(46, 134, 171, 0.35);
+}
+
+.cta-button:focus-visible {
+    outline: 3px solid rgba(212, 118, 58, 0.5);
+    outline-offset: 3px;
 }
 
 /* Container */
@@ -214,7 +219,7 @@ h2 {
 
 /* Highlight Box */
 .highlight-box {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    background: linear-gradient(135deg, rgba(46, 134, 171, 0.12), rgba(27, 94, 126, 0.12));
     border-left: 4px solid var(--primary-color);
     padding: 1.5rem;
     border-radius: 10px;
@@ -283,7 +288,7 @@ h2 {
     font-size: 1.5rem;
     font-weight: bold;
     margin: 0 auto 1.5rem;
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 20px rgba(46, 134, 171, 0.3);
 }
 
 .step h3 {
@@ -297,7 +302,7 @@ h2 {
 
 /* CTA Section */
 .cta-section {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
     color: var(--white);
     padding: 4rem 2rem;
     border-radius: 20px;
