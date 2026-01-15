@@ -168,7 +168,7 @@ shinyUI(
           tabPanel("15% vs 10% kontantinsats",
             br(),
             h3("Hur mycket mer kan du låna om kravet sänks?"),
-            p("Resultatet tar hänsyn till både kontantinsatsen och ditt månadstak."),
+            p("Resultatet tar hänsyn till både kontantinsatsen och ditt inkomsttak."),
             tableOutput("downpaymentTable"),
             br(),
             htmlOutput("downpaymentInsight")
@@ -192,7 +192,7 @@ shinyUI(
               tags$li("Maxlånet beräknas som: L = Månadstak / ((ränta + amortering) / 1200)."),
               tags$li("Om ränteavdrag är påslaget används effektiv ränta = ränta × 0.7."),
               tags$li("Kontantinsatskravet begränsar maxpris: Pris = Kontantinsats / kravet."),
-              tags$li("Maxlånet blir det lägsta av månadstak och kontantinsatsregeln.")
+              tags$li("Maxlånet blir det lägsta av inkomsttak och kontantinsatsregeln.")
             )
           )
         )

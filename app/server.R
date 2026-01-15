@@ -3,7 +3,7 @@ formatnummer <- function(x) {
   format_format(big.mark = " ", decimal.mark = ",", scientific = FALSE)(round(x, digits = 0))
 }
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
   ################################
   # Reactive defaults for conditional inputs
@@ -56,18 +56,58 @@ shinyServer(function(input, output) {
     # Set slider parameters based on down payment
     if (is.null(ki) || ki < 30) {
       # High LTV (>70%): min 2% amortization
-      sliderInput("BoxAmort", "Amortering", value = 2, min = 2, max = 15,
-                  step = 0.5, ticks = FALSE, width = "95%", post = " %")
+      tagList(
+        sliderInput("BoxAmort", "Amortering", value = 2, min = 2, max = 15,
+                    step = 0.5, ticks = FALSE, width = "95%", post = " %"),
+        numericInput("BoxAmort_num", "Skriv amortering (%)", value = 2, min = 2, max = 15, step = 0.5)
+      )
     } else if (ki < 50) {
       # Medium LTV (50-70%): min 1% amortization
-      sliderInput("BoxAmort", "Amortering", value = 1, min = 1, max = 15,
-                  step = 0.5, ticks = FALSE, width = "95%", post = " %")
+      tagList(
+        sliderInput("BoxAmort", "Amortering", value = 1, min = 1, max = 15,
+                    step = 0.5, ticks = FALSE, width = "95%", post = " %"),
+        numericInput("BoxAmort_num", "Skriv amortering (%)", value = 1, min = 1, max = 15, step = 0.5)
+      )
     } else {
       # Low LTV (<50%): no minimum amortization
-      sliderInput("BoxAmort", "Amortering", value = 0, min = 0, max = 15,
-                  step = 0.5, ticks = FALSE, width = "95%", post = " %")
+      tagList(
+        sliderInput("BoxAmort", "Amortering", value = 0, min = 0, max = 15,
+                    step = 0.5, ticks = FALSE, width = "95%", post = " %"),
+        numericInput("BoxAmort_num", "Skriv amortering (%)", value = 0, min = 0, max = 15, step = 0.5)
+      )
     }
   })
+
+  syncNumericSlider <- function(slider_id, numeric_id) {
+    observeEvent(input[[slider_id]], {
+      if (!is.null(input[[numeric_id]]) && !identical(input[[numeric_id]], input[[slider_id]])) {
+        updateNumericInput(session, numeric_id, value = input[[slider_id]])
+      }
+    }, ignoreInit = TRUE)
+
+    observeEvent(input[[numeric_id]], {
+      if (!is.null(input[[numeric_id]]) && !identical(input[[numeric_id]], input[[slider_id]])) {
+        updateSliderInput(session, slider_id, value = input[[numeric_id]])
+      }
+    }, ignoreInit = TRUE)
+  }
+
+  syncNumericSlider("boxPris", "boxPris_num")
+  syncNumericSlider("boxTid", "boxTid_num")
+  syncNumericSlider("boxR", "boxR_num")
+  syncNumericSlider("boxKI", "boxKI_num")
+  syncNumericSlider("boxInc", "boxInc_num")
+  syncNumericSlider("BoxAmort", "BoxAmort_num")
+  syncNumericSlider("boxDeltaP", "boxDeltaP_num")
+  syncNumericSlider("boxDeltaRent", "boxDeltaRent_num")
+  syncNumericSlider("boxDeltaSM", "boxDeltaSM_num")
+  syncNumericSlider("boxAvgift", "boxAvgift_num")
+  syncNumericSlider("boxFörsäkring", "boxFörsäkring_num")
+  syncNumericSlider("boxAndraKöpa", "boxAndraKöpa_num")
+  syncNumericSlider("boxReno", "boxReno_num")
+  syncNumericSlider("boxFlytt", "boxFlytt_num")
+  syncNumericSlider("boxAndraHyra", "boxAndraHyra_num")
+  syncNumericSlider("boxDeposition", "boxDeposition_num")
 
     ################################
     # Att göra

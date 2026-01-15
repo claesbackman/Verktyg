@@ -155,7 +155,7 @@ Detta projekt är öppen källkod för utbildningsändamål.
 ## 👤 Författare
 
 **Claes Bäckman**
-- Hemsida: [sites.google.com/view/claesbackman](https://sites.google.com/view/claesbackman/home)
+- Hemsida: [www.claesbackman.com](https://www.claesbackman.com/)
 - GitHub: [@claesbackman](https://github.com/claesbackman)
 
 ## 🙏 Erkännanden

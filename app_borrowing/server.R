@@ -159,7 +159,7 @@ shinyServer(function(input, output, session) {
 
     HTML(paste0(
       "<p class='help-block'>",
-      "Beräknat månadstak: <strong>", formatnummer(income_cap), " kr</strong> ",
+      "Beräknat inkomsttak: <strong>", formatnummer(income_cap), " kr</strong> ",
       "(", format(round(input$incomeShare, 1), nsmall = 1), "% av inkomsten)</p>"
     ))
   })
@@ -198,7 +198,7 @@ shinyServer(function(input, output, session) {
         paste(formatnummer(data$s15$loan_from_downpayment), "kr"),
         paste(formatnummer(data$s10$loan_from_downpayment), "kr")
       ),
-      `Lån från månadstak` = c(
+      `Lån från inkomsttak` = c(
         ifelse(is.finite(data$s15$loan_from_payment), paste(formatnummer(data$s15$loan_from_payment), "kr"), "Ingen gräns"),
         ifelse(is.finite(data$s10$loan_from_payment), paste(formatnummer(data$s10$loan_from_payment), "kr"), "Ingen gräns")
       ),
@@ -212,7 +212,7 @@ shinyServer(function(input, output, session) {
     extra_price <- data$extra_price
 
     text <- if (!is.finite(extra_loan)) {
-      "När månadstaket inte begränsar kan sänkt krav öka låneutrymmet utan övre gräns."
+      "När inkomsttaket inte begränsar kan sänkt krav öka låneutrymmet utan övre gräns."
     } else {
       paste0(
         "Med dina antaganden ökar maxlånet med ",

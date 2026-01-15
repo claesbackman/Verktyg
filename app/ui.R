@@ -26,11 +26,12 @@ tags$style(HTML("
     fluidRow(
       column(2,
         sliderInput("boxPris", "Bostadspris"
-          , value = 1000000, min=0, max=10000000, step=10000, ticks=FALSE, width="95%", post  = " kr")
-            ),
+          , value = 1000000, min=0, max=10000000, step=10000, ticks=FALSE, width="95%", post  = " kr"),
+        numericInput("boxPris_num", "Skriv belopp (kr)", value = 1000000, min=0, max=10000000, step=1000)
+      ),
       column(10,
         plotOutput("grafPris", height="200px", width= "100%")
-            )
+      )
     ),
     
     # tid 
@@ -44,12 +45,13 @@ tags$style(HTML("
     fluidRow(
       column(2,
         sliderInput("boxTid", "Tid i bostaden"
-          , value = 10, min=1, max=50, step=1, ticks=FALSE, width="95%", post  = " år")
-        ),
+          , value = 10, min=1, max=50, step=1, ticks=FALSE, width="95%", post  = " år"),
+        numericInput("boxTid_num", "Skriv år", value = 10, min=1, max=50, step=1)
+      ),
       column(10,
         plotOutput("grafTid", height="200px", width= "100%")
       )
-        ),
+    ),
         # Ränta 
     br(),            
     HTML("<hr color='grey' >"),
@@ -57,8 +59,8 @@ tags$style(HTML("
     "<h4> Hur ser ditt bolån ut?</h4> Din ränta och kontantinsats har stor påverkan på din månadskostnad.<p>"    )),                       
     br(),            
     fluidRow(column(2,
-                  
-                  sliderInput("boxR", "Bolåneränta.", value = 3, min=0, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %")
+                  sliderInput("boxR", "Bolåneränta.", value = 3, min=0, max=15, step=0.1, ticks=FALSE, width="95%", post  = " %"),
+                  numericInput("boxR_num", "Skriv ränta (%)", value = 3, min=0, max=15, step=0.1)
     ),
     column(10,
          plotOutput("grafRanta", height="200px", width= "100%")
@@ -71,7 +73,8 @@ tags$style(HTML("
     )),      
     br(),            
     fluidRow(column(2,
-    sliderInput("boxKI", "Kontantinsats. ", value = 15, min=15, max=100, step=1, ticks=FALSE, width="95%", post  = " %")
+    sliderInput("boxKI", "Kontantinsats. ", value = 15, min=15, max=100, step=1, ticks=FALSE, width="95%", post  = " %"),
+    numericInput("boxKI_num", "Skriv kontantinsats (%)", value = 15, min=15, max=100, step=1)
     ),
     column(10,
          plotOutput("grafKI", height="200px", width= "100%")
@@ -87,7 +90,8 @@ tags$style(HTML("
     br(),  
     fluidRow(column(2,
             sliderInput("boxInc", "Bruttoinkomst", value = 200000, min=0, max=2000000, step=1000, ticks=FALSE, width="95%", post  = " kr"),
-            uiOutput("amortSlider")
+            numericInput("boxInc_num", "Skriv inkomst (kr)", value = 200000, min=0, max=2000000, step=1000),
+      uiOutput("amortSlider")
     ),
     column(10,
          plotOutput("grafAmort", height="200px", width= "100%")
@@ -113,7 +117,8 @@ tags$style(HTML("
     fluidRow(column(2,
                     HTML("<hr color='grey' >"), 
           sliderInput("boxDeltaP", "Husprisökning",
-                        value = 3, min=0, max=10, step=1, ticks=FALSE, width="95%", post  = " %")
+                        value = 3, min=0, max=10, step=1, ticks=FALSE, width="95%", post  = " %"),
+          numericInput("boxDeltaP_num", "Skriv husprisökning (%)", value = 3, min=0, max=10, step=1)
     ),
     column(10,
            plotOutput("grafDeltaP", height="200px", width= "100%")
@@ -121,8 +126,8 @@ tags$style(HTML("
     ),
     HTML("<hr color='grey' >"), 
     fluidRow(column(2,
-                    sliderInput("boxDeltaRent", "Hyresökning", value = 2, min=0, max=10, step=1, ticks=FALSE, width="95%", post  = " %")
-                    
+                    sliderInput("boxDeltaRent", "Hyresökning", value = 2, min=0, max=10, step=1, ticks=FALSE, width="95%", post  = " %"),
+                    numericInput("boxDeltaRent_num", "Skriv hyresökning (%)", value = 2, min=0, max=10, step=1)
     ),
     column(10,
            plotOutput("grafDeltaHyra", height="200px", width= "100%")
@@ -131,7 +136,8 @@ tags$style(HTML("
     HTML("<hr color='grey' >"), 
     
     fluidRow(column(2,
-        sliderInput("boxDeltaSM", "Avkastning på investeringar", value = 7, min=0, max=15, step=1, ticks=FALSE, width="95%", post  = " %")
+        sliderInput("boxDeltaSM", "Avkastning på investeringar", value = 7, min=0, max=15, step=1, ticks=FALSE, width="95%", post  = " %"),
+        numericInput("boxDeltaSM_num", "Skriv avkastning (%)", value = 7, min=0, max=15, step=1)
     ),
     column(10,
            plotOutput("grafDeltaSM", height="200px", width= "100%")
@@ -146,8 +152,11 @@ tags$style(HTML("
       )),
     fluidRow(column(2,
                   sliderInput("boxAvgift", "Avgift till förening", value = 2000, min=0, max=15000, step=100, ticks=FALSE, width="95%", post  = " kr"),
+                  numericInput("boxAvgift_num", "Skriv avgift (kr)", value = 2000, min=0, max=15000, step=100),
                   sliderInput("boxFörsäkring", "Försäkring", value = 1000, min=0,  max= 15000 ,step=100, ticks=FALSE, width="95%", post  = " kr"),
-                  sliderInput("boxAndraKöpa", "Andra kostnader", value = 1000, min=0,  max= 100000, step=100, ticks=FALSE, width="95%", post  = " kr")
+                  numericInput("boxFörsäkring_num", "Skriv försäkring (kr)", value = 1000, min=0, max=15000, step=100),
+                  sliderInput("boxAndraKöpa", "Andra kostnader", value = 1000, min=0,  max= 100000, step=100, ticks=FALSE, width="95%", post  = " kr"),
+                  numericInput("boxAndraKöpa_num", "Skriv andra kostnader (kr)", value = 1000, min=0, max=100000, step=100)
     ),
     column(10,
          plotOutput("grafKostnader", height="200px", width= "100%")
@@ -160,7 +169,8 @@ tags$style(HTML("
           Här ökar de månadskostnaden, men de gör även att skatten vid försäljning minskar.  <p>"
     )), 
     fluidRow(column(2,
-                  sliderInput("boxReno", "Renoveringar", value = 1, min=0, max= 20, step=1, ticks=FALSE, width="95%", post  = " %")
+                  sliderInput("boxReno", "Renoveringar", value = 1, min=0, max= 20, step=1, ticks=FALSE, width="95%", post  = " %"),
+                  numericInput("boxReno_num", "Skriv renovering (%)", value = 1, min=0, max=20, step=1)
     ),
            column(10,
                   plotOutput("grafReno", height="200px", width= "100%")
@@ -172,6 +182,7 @@ tags$style(HTML("
           Avgifter för besiktning,  kostnad för att flytta möbler eller liknande engångskostnader påverkar också.<p>  "
     )), 
     sliderInput("boxFlytt", "Flyttkostnader", value = 10000, min=0,  max= 40000,step=100, ticks=FALSE, width="95%", post  = " kr"),
+    numericInput("boxFlytt_num", "Skriv flyttkostnader (kr)", value = 10000, min=0, max=40000, step=100),
     br(),            
     HTML("<hr color='grey' >"),
     HTML(paste(
@@ -179,8 +190,10 @@ tags$style(HTML("
           en deposition eller en försäkring. <p>"
     )), 
       sliderInput("boxAndraHyra", "Andra kostnader per månad för att hyra", value = 1000, min=0,  max= 15000, step=100, ticks=FALSE, width="95%", post  = " kr"),
+      numericInput("boxAndraHyra_num", "Skriv andra kostnader (kr)", value = 1000, min=0, max=15000, step=100),
     
     sliderInput("boxDeposition", "Deposition", value = 1, min=0,  max= 12, step=1, ticks=FALSE, width="95%", post  = " månader"),
+    numericInput("boxDeposition_num", "Skriv deposition (mån)", value = 1, min=0, max=12, step=1),
     br()
     ), #  column
     column(4, fixedPanel(top = "30%", # setBackgroundColor("ghostwhite"),
@@ -207,7 +220,7 @@ tags$style(HTML("
            HTML("<hr color='grey' >"), 
            br(),
            
-    HTML("Denna sida har designats av <a href='https://sites.google.com/view/claesbackman/home'><font color='1508ff'>Claes Bäckman.</font></a>")
+    HTML("Denna sida har designats av <a href='https://www.claesbackman.com/'><font color='1508ff'>Claes Bäckman.</font></a>")
     ), 
     br())
     
