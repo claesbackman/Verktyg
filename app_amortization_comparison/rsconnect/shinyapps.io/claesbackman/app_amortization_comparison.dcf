@@ -1,0 +1,12 @@
+name: app_amortization_comparison
+title: app_amortization_comparison
+username: claesbackman
+account: claesbackman
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16461298
+bundleId: 11468555
+url: https://claesbackman.shinyapps.io/app_amortization_comparison/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

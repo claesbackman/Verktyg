@@ -22,9 +22,9 @@
             <ul class="nav-menu">
                 <li><a href="index.html">Hem</a></li>
                 <li><a href="calculator.html">Köpa eller hyra</a></li>
-                <li><a href="wealth-comparison.html" class="active">Förmögenhetsjämförelse</a></li>
+                <li><a href="wealth-comparison.html">Förmögenhetsjämförelse</a></li>
                 <li><a href="borrowing-capacity.html">Låneutrymme</a></li>
-                <li><a href="amortization-comparison.html">Amorteringsjämförelse</a></li>
+                <li><a href="amortization-comparison.html" class="active">Amorteringsjämförelse</a></li>
                 <li><a href="documentation.html">Dokumentation</a></li>
                 <li><a href="about.html">Om verktyget</a></li>
             </ul>
@@ -33,55 +33,65 @@
 
     <main class="container">
         <section>
-            <h2>Förmögenhetsjämförelse: Köpa vs Hyra</h2>
+            <h2>Amorteringsjämförelse: Förmögenhetsuppbyggnad</h2>
             <p class="lead">
-                Jämför hur din förmögenhet utvecklas över tid beroende på om du köper eller hyr din bostad.
-                Se exakt vilka faktorer som påverkar ditt resultat.
+                Jämför hur olika amorteringsgrader påverkar din förmögenhetsuppbyggnad över tid.
+                Se vad som händer om du amorterar mindre och investerar skillnaden på börsen istället.
             </p>
 
             <iframe
-                src="https://claesbackman.shinyapps.io/app_amortization/"
+                src="https://claesbackman.shinyapps.io/app_amortization_comparison/"
                 class="calculator-embed"
-                title="Förmögenhetsjämförelse Kalkylator"
+                title="Amorteringsjämförelse Kalkylator"
             ></iframe>
 
             <div class="content-section" style="margin-top: 3rem;">
                 <h3>Hur fungerar denna kalkylator?</h3>
                 <p>
-                    Till skillnad från "Köpa eller hyra"-kalkylatorn som beräknar en ekvivalent hyra,
-                    visar denna kalkylator din faktiska förmögenhetsutveckling över tid för båda scenarierna.
+                    Denna kalkylator hjälper dig jämföra två strategier för amortering och investeringar.
+                    Du kan se hur din totala förmögenhet utvecklas beroende på om du amorterar mer eller mindre.
                 </p>
 
-                <h4>Scenario 1: Köpa</h4>
+                <h4>Scenario A: Lägre amortering</h4>
                 <ul>
-                    <li><strong>Kontantinsats:</strong> Ditt startkapital i bostaden</li>
-                    <li><strong>Husprisvinst:</strong> Värdestegring minus reavinstskatt</li>
-                    <li><strong>Amortering:</strong> Eget kapital som byggs genom avbetalningar</li>
-                    <li><strong>Räntebesparing:</strong> Sparad ränta tack vare lägre skuld (investeras)</li>
-                    <li><strong>Alternativkostnad:</strong> Utebliven avkastning om kontantinsatsen investerats</li>
+                    <li><strong>Amortering:</strong> Du bygger eget kapital i bostaden genom avbetalningar</li>
+                    <li><strong>Räntebesparing:</strong> Lägre skuld ger lägre räntekostnader</li>
+                    <li><strong>Investering:</strong> Skillnaden mot högre amortering investeras på börsen</li>
+                    <li><strong>Avkastning:</strong> Ränta-på-ränta effekten av investeringarna</li>
                 </ul>
 
-                <h4>Scenario 2: Hyra</h4>
+                <h4>Scenario B: Högre amortering</h4>
                 <ul>
-                    <li><strong>Startkapital:</strong> Kontantinsats + flyttkostnader som investeras</li>
-                    <li><strong>Avkastning:</strong> Ränta-på-ränta på det investerade kapitalet</li>
-                    <li><strong>Sparande:</strong> Skillnaden mellan köp- och hyrkostnader (kan vara negativ)</li>
+                    <li><strong>Amortering:</strong> Snabbare minskning av skulden</li>
+                    <li><strong>Räntebesparing:</strong> Större besparing tack vare lägre skuld</li>
+                    <li><strong>Ingen investering:</strong> Alla pengar går till amortering</li>
+                </ul>
+
+                <h3>Den grundläggande frågan</h3>
+                <p>
+                    Ska du använda extra pengar till att amortera mer på bolånet, eller investera dem på börsen?
+                    Svaret beror på förhållandet mellan din bolåneränta och förväntad aktieavkastning.
+                </p>
+                <ul>
+                    <li>Om aktieavkastningen är högre än räntan (efter skatteavdrag) kan det löna sig att investera istället</li>
+                    <li>Men börsen är riskfylld - amortering är en säker "avkastning"</li>
+                    <li>Lägre skuld ger större trygghet och flexibilitet</li>
                 </ul>
 
                 <h3>Viktiga antaganden</h3>
                 <ul>
                     <li>Ränteavdrag: 30% skattelättnad på 70% av räntan</li>
-                    <li>Reavinstskatt: 22/30 av vinsten beskattas med 30%</li>
-                    <li>Renovering minskar skattepliktig vinst</li>
-                    <li>Räntebesparingar från amortering investeras</li>
+                    <li>Investeringar på ISK (schablonbeskattning inräknad)</li>
+                    <li>Konstant ränta och avkastning (i verkligheten varierar dessa)</li>
+                    <li>Inga transaktionskostnader</li>
                 </ul>
 
-                <h3>Tips för tolkning</h3>
+                <h3>Kom ihåg</h3>
                 <ul>
-                    <li>Resultatet beror starkt på antaganden om husprisökning och investeringsavkastning</li>
-                    <li>Historiskt har aktier gett ca 7-8% avkastning i snitt, men med stor variation</li>
-                    <li>Huspriserna varierar mycket mellan år och regioner</li>
-                    <li>Tänk på att bostadsköp ger stabilitet och trygghet som inte syns i siffrorna</li>
+                    <li>Historisk avkastning är ingen garanti för framtida avkastning</li>
+                    <li>Börsen kan gå ner kraftigt - amortering är riskfri</li>
+                    <li>Din risktolerans och livssituation spelar stor roll</li>
+                    <li>Använd kalkylatorn som ett verktyg för att förstå sambanden, inte som finansiell rådgivning</li>
                 </ul>
             </div>
         </section>
