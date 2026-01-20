@@ -342,6 +342,10 @@ fluidPage(
             tags$li("Ingen hänsyn tas till inflation")
           ),
 
+          h4("Risk"),
+          p("Investeringar på börsen innebär risk och kan ge både positiva och negativa utfall."),
+          p("Beräkningen tar inte hänsyn till risk, volatilitet eller sannolikheten för olika utfall."),
+
           h4("Kom ihåg"),
           tags$ul(
             tags$li("Historisk avkastning är ingen garanti för framtida avkastning"),
